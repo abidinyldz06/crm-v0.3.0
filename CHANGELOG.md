@@ -1,7 +1,47 @@
 
 # Vize Danışmanlık CRM - Değişiklik Günlüğü
 
-## [v0.2.4] - 2025-07-26
+## [v0.2.4] - 2025-01-27
+
+### 🔔 Bildirim Sistemi ve Modern Ayarlar Sayfası
+- **Bildirim Sistemi:**
+  - AppBar'a profesyonel bildirim çanı eklendi (profil butonunun yerine)
+  - Okunmamış bildirim sayısı için kırmızı badge sistemi (3 bildirim gösterimi)
+  - PopupMenu ile dropdown bildirim listesi (4 farklı bildirim türü)
+  - Bildirim türleri: Yeni Başvuru, Randevu Hatırlatması, Başvuru Onayı, Sistem Güncellemesi
+  - Tüm bildirimler dialog'u (6 bildirim örneği ile)
+  - Akıllı yönlendirme: Bildirime tıklayınca ilgili sayfaya gitme
+  - Okunmuş/okunmamış durum yönetimi (mavi vurgu sistemi)
+  - "Tümünü Okundu İşaretle" toplu işlem özelliği
+- **Modern Ayarlar Sayfası:**
+  - Kapsamlı ayarlar sayfası oluşturuldu (settings_screen_simple.dart)
+  - 5 ana bölüm: Profil, Görünüm & Dil, Bildirimler, Sistem & Destek, Güvenlik
+  - Modern section header tasarımı (renkli ikonlar ve açıklamalar)
+  - Gelişmiş switch tile'lar (modern container tasarımı)
+  - Kullanıcı ayarlarını Firestore'a kaydetme servisi
+  - Dil seçimi (Türkçe/English), tema ayarları, bildirim tercihleri
+  - Sistem bilgileri, depolama kullanımı, yardım ve destek
+  - Şifre değiştirme ve güvenli çıkış yapma özellikleri
+- **UI/UX İyileştirmeleri:**
+  - Renkli ikonlar ve kategori bazlı renk kodlaması
+  - Responsive tasarım (web ve mobil uyumlu)
+  - Modern card-based layout
+  - Hover efektleri ve smooth animasyonlar
+  - Kullanıcı dostu dialog'lar ve feedback sistemleri
+- **Backend Geliştirmeleri:**
+  - KullaniciServisi'ne updateUserSettings() metodu eklendi
+  - getUserSettings() metodu ile ayar okuma
+  - updateUserRole() admin fonksiyonu
+  - getAllUsers() kullanıcı yönetimi metodu
+- **Test Sonuçları:** 
+  - Bildirim sistemi Chrome'da tam fonksiyonel
+  - Ayarlar sayfası responsive ve kullanıcı dostu
+  - Tüm yönlendirmeler ve popup'lar çalışıyor
+  - Firebase entegrasyonu sorunsuz
+
+---
+
+## [v0.2.3] - 2025-01-26
 
 ### 🎯 Faz 8: Sistem Stabilizasyonu ve Tam Fonksiyonel CRM Tamamlandı
 - **Kritik Sistem Düzeltmeleri:**
