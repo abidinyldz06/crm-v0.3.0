@@ -13,6 +13,7 @@ import 'package:crm/screens/login_screen.dart';
 import 'package:crm/screens/global_search_screen.dart';
 import 'package:crm/screens/musteri_listesi.dart';
 import 'package:crm/screens/profil_ekrani.dart';
+import 'package:crm/screens/settings_screen_simple.dart';
 // import 'package:crm/screens/raporlar_ekrani.dart'; // Artık kullanılmıyor
 import 'package:crm/screens/takvim_ekrani.dart';
 import 'package:crm/services/auth_service.dart';
@@ -291,7 +292,7 @@ class _DashboardV2State extends State<DashboardV2> {
       case 4:
         return const AdvancedReportingScreen();
       case 5:
-        return const ProfilEkrani(); // Ayarlar sayfası olarak Profil ekranını kullanıyoruz
+        return const SettingsScreen(); // Yeni ayarlar sayfası
       default:
         return const AnaSayfaDashboardV2();
     }
