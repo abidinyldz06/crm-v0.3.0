@@ -140,15 +140,7 @@ class _DashboardV2State extends State<DashboardV2> {
                     );
                   },
                 ),
-                 IconButton(
-                  icon: const Icon(Icons.person_outline),
-                  tooltip: 'Profilim',
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const ProfilEkrani()),
-                    );
-                  },
-                ),
+                 _buildNotificationButton(),
                 IconButton(
                   icon: const Icon(Icons.logout),
                   onPressed: () async {
@@ -276,6 +268,412 @@ class _DashboardV2State extends State<DashboardV2> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildNotificationButton() {
+    return PopupMenuButton<String>(
+      icon: Stack(
+        children: [
+          const Icon(Icons.notifications_outlined),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 12,
+                minHeight: 12,
+              ),
+              child: const Text(
+                '3',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+      tooltip: 'Bildirimler',
+      offset: const Offset(0, 40),
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          value: 'header',
+          enabled: false,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                const Icon(Icons.notifications, color: Colors.blue),
+                const SizedBox(width: 8),
+                const Text(
+                  'Bildirimler',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _showAllNotifications();
+                  },
+                  child: const Text('Tümünü Gör'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const PopupMenuDivider(),
+        ..._getNotificationItems(),
+        const PopupMenuDivider(),
+        PopupMenuItem<String>(
+          value: 'settings',
+          child: const Row(
+            children: [
+              Icon(Icons.settings, size: 20),
+              SizedBox(width: 8),
+              Text('Bildirim Ayarları'),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (String value) {
+        if (value == 'settings') {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SettingsScreen()),
+          );
+        } else if (value.startsWith('notification_')) {
+          _handleNotificationTap(value);
+        }
+      },
+    );
+  }
+
+  List<PopupMenuEntry<String>> _getNotificationItems() {
+    final notifications = [
+      {
+        'id': 'notification_1',
+        'title': 'Yeni Başvuru',
+        'message': 'Ahmet Yılmaz yeni başvuru oluşturdu',
+        'time': '5 dk önce',
+        'icon': Icons.assignment,
+        'color': Colors.blue,
+        'unread': true,
+      },
+      {
+        'id': 'notification_2',
+        'title': 'Randevu Hatırlatması',
+        'message': 'Yarın saat 14:00\'te Mehmet Demir ile randevu',
+        'time': '1 saat önce',
+        'icon': Icons.schedule,
+        'color': Colors.orange,
+        'unread': true,
+      },
+      {
+        'id': 'notification_3',
+        'title': 'Başvuru Onaylandı',
+        'message': 'Ayşe Kaya\'nın başvurusu onaylandı',
+        'time': '2 saat önce',
+        'icon': Icons.check_circle,
+        'color': Colors.green,
+        'unread': true,
+      },
+      {
+        'id': 'notification_4',
+        'title': 'Sistem Güncellemesi',
+        'message': 'CRM sistemi v0.2.3 güncellendi',
+        'time': '1 gün önce',
+        'icon': Icons.system_update,
+        'color': Colors.purple,
+        'unread': false,
+      },
+    ];
+
+    return notifications.map((notification) {
+      return PopupMenuItem<String>(
+        value: notification['id'] as String,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: (notification['color'] as Color).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  notification['icon'] as IconData,
+                  color: notification['color'] as Color,
+                  size: 16,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            notification['title'] as String,
+                            style: TextStyle(
+                              fontWeight: (notification['unread'] as bool) 
+                                  ? FontWeight.bold 
+                                  : FontWeight.normal,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        if (notification['unread'] as bool)
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      notification['message'] as String,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      notification['time'] as String,
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  void _handleNotificationTap(String notificationId) {
+    // Bildirime tıklandığında yapılacak işlemler
+    switch (notificationId) {
+      case 'notification_1':
+        // Yeni başvuru bildirimine tıklandı - Başvurular sayfasına git
+        setState(() => _selectedIndex = 2);
+        break;
+      case 'notification_2':
+        // Randevu hatırlatmasına tıklandı - Takvim sayfasına git
+        setState(() => _selectedIndex = 3);
+        break;
+      case 'notification_3':
+        // Başvuru onayına tıklandı - Başvurular sayfasına git
+        setState(() => _selectedIndex = 2);
+        break;
+      case 'notification_4':
+        // Sistem güncellemesine tıklandı - Ayarlar sayfasına git
+        setState(() => _selectedIndex = 5);
+        break;
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Bildirim açıldı: $notificationId'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showAllNotifications() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.notifications, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Tüm Bildirimler'),
+            ],
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: ListView(
+              children: [
+                _buildNotificationTile(
+                  icon: Icons.assignment,
+                  title: 'Yeni Başvuru',
+                  message: 'Ahmet Yılmaz yeni başvuru oluşturdu',
+                  time: '5 dk önce',
+                  color: Colors.blue,
+                  unread: true,
+                ),
+                _buildNotificationTile(
+                  icon: Icons.schedule,
+                  title: 'Randevu Hatırlatması',
+                  message: 'Yarın saat 14:00\'te Mehmet Demir ile randevu',
+                  time: '1 saat önce',
+                  color: Colors.orange,
+                  unread: true,
+                ),
+                _buildNotificationTile(
+                  icon: Icons.check_circle,
+                  title: 'Başvuru Onaylandı',
+                  message: 'Ayşe Kaya\'nın başvurusu onaylandı',
+                  time: '2 saat önce',
+                  color: Colors.green,
+                  unread: true,
+                ),
+                _buildNotificationTile(
+                  icon: Icons.system_update,
+                  title: 'Sistem Güncellemesi',
+                  message: 'CRM sistemi v0.2.3 güncellendi',
+                  time: '1 gün önce',
+                  color: Colors.purple,
+                  unread: false,
+                ),
+                _buildNotificationTile(
+                  icon: Icons.person_add,
+                  title: 'Yeni Müşteri',
+                  message: 'Fatma Özkan sisteme eklendi',
+                  time: '2 gün önce',
+                  color: Colors.teal,
+                  unread: false,
+                ),
+                _buildNotificationTile(
+                  icon: Icons.email,
+                  title: 'E-posta Gönderildi',
+                  message: 'Otomatik e-posta başarıyla gönderildi',
+                  time: '3 gün önce',
+                  color: Colors.indigo,
+                  unread: false,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Tüm bildirimleri okundu olarak işaretle
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Tüm bildirimler okundu olarak işaretlendi'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              child: const Text('Tümünü Okundu İşaretle'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Kapat'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildNotificationTile({
+    required IconData icon,
+    required String title,
+    required String message,
+    required String time,
+    required Color color,
+    required bool unread,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: unread ? Colors.blue[50] : Colors.grey[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: unread ? Colors.blue[200]! : Colors.grey[200]!,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontWeight: unread ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    if (unread)
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  time,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

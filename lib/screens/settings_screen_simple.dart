@@ -134,17 +134,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.person, color: Colors.blue),
-                const SizedBox(width: 8),
-                Text(
-                  'Profil Bilgileri',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            _buildSectionHeader(
+              icon: Icons.person,
+              title: 'Profil Bilgileri',
+              color: Colors.blue,
+              subtitle: 'Hesap bilgilerinizi görüntüleyin ve düzenleyin',
             ),
             const SizedBox(height: 16),
             ListTile(
@@ -196,42 +190,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.settings, color: Colors.purple),
-                const SizedBox(width: 8),
-                Text(
-                  'Uygulama Ayarları',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            _buildSectionHeader(
+              icon: Icons.palette,
+              title: 'Görünüm ve Dil',
+              color: Colors.purple,
+              subtitle: 'Tema, dil ve görünüm tercihlerinizi ayarlayın',
             ),
             const SizedBox(height: 16),
-            SwitchListTile(
-              title: const Text('Karanlık Tema'),
-              subtitle: const Text('Gece modu (Yakında aktif olacak)'),
+            _buildModernSwitchTile(
+              icon: Icons.dark_mode,
+              title: 'Karanlık Tema',
+              subtitle: 'Gece modu aktif/pasif',
               value: _darkMode,
               onChanged: (value) {
                 setState(() => _darkMode = value);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Karanlık tema yakında eklenecek!')),
+                  SnackBar(
+                    content: Text(value ? 'Karanlık tema aktif (Yakında!)' : 'Açık tema aktif'),
+                    backgroundColor: value ? Colors.grey[800] : Colors.blue,
+                  ),
                 );
               },
-              secondary: const Icon(Icons.dark_mode),
+              iconColor: Colors.indigo,
             ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text('Dil'),
-              subtitle: Text(_getLanguageName(_language)),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _buildModernListTile(
+              icon: Icons.language,
+              title: 'Dil Seçimi',
+              subtitle: _getLanguageName(_language),
               onTap: () => _showLanguagePicker(),
+              iconColor: Colors.green,
             ),
-            ListTile(
-              leading: const Icon(Icons.color_lens),
-              title: const Text('Tema Rengi'),
-              subtitle: const Text('Mavi (Varsayılan)'),
+            _buildModernListTile(
+              icon: Icons.color_lens,
+              title: 'Tema Rengi',
+              subtitle: 'Mavi (Varsayılan)',
               trailing: Container(
                 width: 24,
                 height: 24,
@@ -245,6 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SnackBar(content: Text('Tema rengi seçimi yakında eklenecek!')),
                 );
               },
+              iconColor: Colors.purple,
             ),
           ],
         ),
@@ -259,36 +252,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.notifications, color: Colors.orange),
-                const SizedBox(width: 8),
-                Text(
-                  'Bildirimler',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            _buildSectionHeader(
+              icon: Icons.notifications_active,
+              title: 'Bildirim Tercihleri',
+              color: Colors.orange,
+              subtitle: 'E-posta ve sistem bildirimlerini yönetin',
             ),
             const SizedBox(height: 16),
-            SwitchListTile(
-              title: const Text('Bildirimler'),
-              subtitle: const Text('Tüm bildirimleri aç/kapat'),
+            _buildModernSwitchTile(
+              icon: Icons.notifications_active,
+              title: 'Sistem Bildirimleri',
+              subtitle: 'Tüm bildirimleri aç/kapat',
               value: _notifications,
               onChanged: (value) {
                 setState(() => _notifications = value);
               },
-              secondary: const Icon(Icons.notifications_active),
+              iconColor: Colors.orange,
             ),
-            SwitchListTile(
-              title: const Text('E-posta Bildirimleri'),
-              subtitle: const Text('E-posta ile bildirim al'),
-              value: _emailNotifications,
-              onChanged: _notifications ? (value) {
-                setState(() => _emailNotifications = value);
-              } : null,
-              secondary: const Icon(Icons.email),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              decoration: BoxDecoration(
+                color: _notifications ? Colors.grey[50] : Colors.grey[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: SwitchListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                secondary: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(_notifications ? 0.1 : 0.05),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.email,
+                    color: _notifications ? Colors.blue : Colors.grey,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  'E-posta Bildirimleri',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: _notifications ? Colors.black : Colors.grey,
+                  ),
+                ),
+                subtitle: Text(
+                  'E-posta ile bildirim al',
+                  style: TextStyle(
+                    color: _notifications ? Colors.grey[600] : Colors.grey[400],
+                    fontSize: 13,
+                  ),
+                ),
+                value: _emailNotifications,
+                onChanged: _notifications ? (value) {
+                  setState(() => _emailNotifications = value);
+                } : null,
+                activeColor: Colors.blue,
+              ),
             ),
           ],
         ),
@@ -303,45 +323,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.info, color: Colors.teal),
-                const SizedBox(width: 8),
-                Text(
-                  'Sistem Bilgileri',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            _buildSectionHeader(
+              icon: Icons.info_outline,
+              title: 'Sistem ve Destek',
+              color: Colors.teal,
+              subtitle: 'Uygulama bilgileri, yardım ve destek',
             ),
             const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.apps),
-              title: const Text('Uygulama Sürümü'),
-              subtitle: const Text('v0.2.3 (Build 230126)'),
+            _buildModernListTile(
+              icon: Icons.apps,
+              title: 'Uygulama Sürümü',
+              subtitle: 'v0.2.3 (Build 230126)',
+              trailing: const Icon(Icons.info_outline, size: 16),
               onTap: () => _showVersionInfo(),
+              iconColor: Colors.blue,
             ),
-            ListTile(
-              leading: const Icon(Icons.storage),
-              title: const Text('Depolama'),
-              subtitle: const Text('Kullanılan alan: 2.5 GB / 10 GB'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _buildModernListTile(
+              icon: Icons.storage,
+              title: 'Depolama Kullanımı',
+              subtitle: 'Kullanılan alan: 2.5 GB / 10 GB',
               onTap: () => _showStorageInfo(),
+              iconColor: Colors.green,
             ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('Yardım ve Destek'),
-              subtitle: const Text('Kullanım kılavuzu ve destek'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _buildModernListTile(
+              icon: Icons.help_outline,
+              title: 'Yardım ve Destek',
+              subtitle: 'Kullanım kılavuzu ve canlı destek',
               onTap: () => _showHelpDialog(),
+              iconColor: Colors.teal,
             ),
-            ListTile(
-              leading: const Icon(Icons.bug_report),
-              title: const Text('Hata Raporu Gönder'),
-              subtitle: const Text('Sorun bildirin'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _buildModernListTile(
+              icon: Icons.bug_report,
+              title: 'Hata Bildirimi',
+              subtitle: 'Sorun ve önerilerinizi bildirin',
               onTap: () => _showBugReportDialog(),
+              iconColor: Colors.orange,
             ),
           ],
         ),
@@ -356,31 +372,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.exit_to_app, color: Colors.red),
-                const SizedBox(width: 8),
-                Text(
-                  'Hesap',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            _buildSectionHeader(
+              icon: Icons.security,
+              title: 'Güvenlik ve Hesap',
+              color: Colors.red,
+              subtitle: 'Şifre değiştirme ve hesap yönetimi',
             ),
             const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.lock, color: Colors.orange),
-              title: const Text('Şifre Değiştir'),
-              subtitle: const Text('Hesap şifrenizi güncelleyin'),
-              trailing: const Icon(Icons.arrow_forward_ios),
+            _buildModernListTile(
+              icon: Icons.lock_outline,
+              title: 'Şifre Değiştir',
+              subtitle: 'Hesap güvenliğinizi güncelleyin',
               onTap: () => _showChangePasswordDialog(),
+              iconColor: Colors.orange,
             ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Çıkış Yap', style: TextStyle(color: Colors.red)),
-              subtitle: const Text('Hesaptan çıkış yap'),
-              onTap: () => _showLogoutDialog(),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.red[200]!),
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.logout, color: Colors.red, size: 20),
+                ),
+                title: const Text(
+                  'Çıkış Yap',
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+                ),
+                subtitle: Text(
+                  'Hesaptan güvenli çıkış yapın',
+                  style: TextStyle(color: Colors.red[700], fontSize: 13),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, color: Colors.red, size: 16),
+                onTap: () => _showLogoutDialog(),
+              ),
             ),
           ],
         ),
@@ -389,6 +422,133 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Helper Methods
+  Widget _buildSectionHeader({
+    required IconData icon,
+    required String title,
+    required Color color,
+    String? subtitle,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildModernSwitchTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    Color? iconColor,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: SwitchListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        secondary: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (iconColor ?? Colors.blue).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: iconColor ?? Colors.blue, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+        ),
+        value: value,
+        onChanged: onChanged,
+        activeColor: iconColor ?? Colors.blue,
+      ),
+    );
+  }
+
+  Widget _buildModernListTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
+    Color? iconColor,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (iconColor ?? Colors.blue).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: iconColor ?? Colors.blue, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+        ),
+        trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
+      ),
+    );
+  }
+
   Color _getRoleColor(String? role) {
     switch (role?.toLowerCase()) {
       case 'admin':
