@@ -1,14 +1,54 @@
-# Vize Danışmanlık CRM
+# Vize Danışmanlık CRM v0.2.5
 
-Bu proje, vize danışmanlık süreçlerini yönetmek için geliştirilmiş bir CRM (Müşteri İlişkileri Yönetimi) uygulamasıdır. Flutter ve Firebase kullanılarak oluşturulmuştur.
+Bu proje, vize danışmanlık süreçlerini yönetmek için geliştirilmiş bir **Enterprise CRM (Müşteri İlişkileri Yönetimi)** uygulamasıdır. Flutter ve Firebase kullanılarak oluşturulmuştur.
+
+## 🎉 v0.2.5 - Real-time Bildirimler Sürümü
+
+### 🔔 Yeni Özellikler
+- **Firebase Cloud Messaging (FCM)** ile real-time bildirimler
+- **7 farklı bildirim türü** (Application, Appointment, Approval, System, Message, Customer, Test)
+- **Modern bildirim dropdown** menüsü ve badge sayısı
+- **Test bildirimi** gönderme sistemi
+- **Kalıcı bildirim saklama** ve okundu/okunmadı durumu
 
 ## ✨ Temel Özellikler
 
-*   **Kullanıcı Yönetimi:** Rol bazlı (admin/danışman) kimlik doğrulama.
-*   **Müşteri Yönetimi:** Müşteri ekleme, listeleme, arama ve güvenli silme (soft delete).
-*   **Başvuru Yönetimi:** Müşterilere özel başvurular oluşturma, danışman atama ve dosya yükleme.
-*   **Dinamik Dashboard:** Ana ekranda son başvuruların anlık olarak listelenmesi.
-*   **Güvenli ve Modern Altyapı:** Firebase (Auth, Firestore, Storage) ve Flutter web (Canvaskit) kullanılarak geliştirilmiştir.
+### 🔐 Kullanıcı Yönetimi
+*   **Rol bazlı kimlik doğrulama** (admin/danışman)
+*   **Güvenli oturum yönetimi**
+
+### 👥 Müşteri Yönetimi
+*   **Müşteri ekleme, listeleme, arama**
+*   **Güvenli silme (soft delete)**
+*   **Detaylı müşteri profilleri**
+
+### 📋 Başvuru Yönetimi
+*   **Müşterilere özel başvurular**
+*   **Danışman atama sistemi**
+*   **Dosya yükleme ve yönetimi**
+
+### 📊 Dashboard v2
+*   **Modern ve responsive tasarım**
+*   **Real-time bildirimler**
+*   **Anlık istatistikler**
+*   **Son başvuruların listelenmesi**
+
+### 🎨 Tema ve Dil Desteği
+*   **Karanlık/Açık tema** desteği
+*   **Türkçe/İngilizce** çoklu dil desteği
+*   **Kullanıcı tercihlerinin kaydedilmesi**
+
+### 🔔 Real-time Bildirimler
+*   **Firebase Cloud Messaging** entegrasyonu
+*   **Anlık bildirim alma**
+*   **Badge sayısı göstergesi**
+*   **Test bildirimi sistemi**
+
+### 🛡️ Güvenli ve Modern Altyapı
+*   **Firebase** (Auth, Firestore, Storage, FCM)
+*   **Flutter web** (Canvaskit)
+*   **Provider pattern** ile state management
+*   **SharedPreferences** ile kalıcı veri saklama
 
 ## 🚀 Kurulum ve Çalıştırma
 

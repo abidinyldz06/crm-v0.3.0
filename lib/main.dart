@@ -1,5 +1,8 @@
 import 'package:crm/screens/login_screen.dart';
 import 'package:crm/services/auth_service.dart';
+import 'package:crm/services/theme_service.dart';
+import 'package:crm/services/localization_service.dart';
+import 'package:crm/services/fcm_service.dart';
 import 'package:crm/theme_v2.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +14,8 @@ import 'package:crm/services/musteri_servisi.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:provider/provider.dart';
+import 'package:crm/generated/l10n/app_localizations.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -23,6 +28,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
+  // Theme, Localization ve FCM service'lerini initialize et
+  await ThemeService().init();
+  await LocalizationService().init();
+  await FCMService().initialize();
+  
   runApp(const MyApp());
 }
 
@@ -31,19 +42,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vize Danışmanlık CRM',
-      debugShowCheckedModeBanner: false,
-      theme: AppThemeV2.theme, // Değiştirildi
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeService()),
+        ChangeNotifierProvider(create: (context) => LocalizationService()),
+        ChangeNotifierProvider(create: (context) => FCMService()),
       ],
-      supportedLocales: const [
-        Locale('tr', 'TR'),
-      ],
-      home: const AuthWrapper(),
+      child: Consumer2<ThemeService, LocalizationService>(
+        builder: (context, themeService, localizationService, child) {
+          return MaterialApp(
+            title: 'Vize Danışmanlık CRM',
+            debugShowCheckedModeBanner: false,
+            theme: AppThemeV2.lightTheme,
+            darkTheme: AppThemeV2.darkTheme,
+            themeMode: themeService.themeMode,
+            locale: localizationService.locale,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('tr', 'TR'),
+              Locale('en', 'US'),
+            ],
+            home: const AuthWrapper(),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/musteri_detay':
@@ -75,6 +99,9 @@ class MyApp extends StatelessWidget {
             return null;
         }
       },
+          );
+        },
+      ),
     );
   }
 }

@@ -1,6 +1,48 @@
 
 # Vize Danışmanlık CRM - Değişiklik Günlüğü
 
+## [v0.2.5] - 2025-01-27
+
+### 🔔 Real-time Bildirimler ve Firebase Cloud Messaging Entegrasyonu
+- **Firebase Cloud Messaging (FCM) Sistemi:**
+  - FCMService ile tam Firebase Cloud Messaging entegrasyonu
+  - Real-time bildirim alma ve gösterme sistemi
+  - FCM token yönetimi ve otomatik yenileme
+  - Background ve foreground mesaj işleme
+  - Web service worker (firebase-messaging-sw.js) desteği
+- **Bildirim Türleri ve Yönetimi:**
+  - 7 farklı bildirim türü: Application, Appointment, Approval, System, Message, Customer, Test
+  - Her tür için özel renk kodlaması ve ikonlar
+  - Bildirim durumu yönetimi (okundu/okunmadı)
+  - Zaman formatı ("5 dk önce", "2 saat önce")
+  - SharedPreferences ile kalıcı bildirim saklama
+- **Modern Bildirim UI:**
+  - Dashboard'da bildirim ikonu ve dropdown menü
+  - Badge sayısı ile okunmamış bildirim göstergesi
+  - Bildirime tıklayarak okundu işaretleme
+  - Responsive tasarım ile web/mobil uyumlu
+- **Test Sistemi:**
+  - Dashboard'dan "Test Notification" butonu
+  - Ayarlar sayfasından "Test Bildirimi" seçeneği
+  - Anında bildirim ekleme ve badge güncelleme
+  - Başarı mesajları ile kullanıcı geri bildirimi
+- **Provider Pattern Entegrasyonu:**
+  - NotificationProvider ile state management
+  - Real-time UI güncellemeleri
+  - Bildirim sayısı otomatik güncelleme
+- **Teknik Geliştirmeler:**
+  - Firebase bağımlılıkları güncellendi (firebase_messaging: ^15.1.3)
+  - Main.dart'ta FCM initialization
+  - Web desteği için service worker konfigürasyonu
+  - Error handling ve logging sistemi
+- **Test Sonuçları:** 
+  - FCM servisi Chrome'da tam fonksiyonel
+  - Token alma ve bildirim gönderme başarılı
+  - Background/foreground mesajlar çalışıyor
+  - Kalıcı saklama ve UI güncellemeleri sorunsuz
+
+---
+
 ## [v0.2.4] - 2025-01-27
 
 ### 🔔 Bildirim Sistemi ve Modern Ayarlar Sayfası

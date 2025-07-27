@@ -1,0 +1,111 @@
+{
+  "@@locale": "en",
+  "appTitle": "Visa Consultancy CRM",
+  
+  "login": "Login",
+  "logout": "Logout",
+  "email": "Email",
+  "password": "Password",
+  "forgotPassword": "Forgot Password",
+  
+  "dashboard": "Dashboard",
+  "customers": "Customers",
+  "applications": "Applications",
+  "calendar": "Calendar",
+  "reports": "Reports",
+  "settings": "Settings",
+  
+  "notifications": "Notifications",
+  "profile": "Profile",
+  "search": "Search",
+  "help": "Help",
+  "support": "Support",
+  
+  "darkTheme": "Dark Theme",
+  "lightTheme": "Light Theme",
+  "language": "Language",
+  "turkish": "Turkish",
+  "english": "English",
+  
+  "profileInfo": "Profile Information",
+  "profileInfoSubtitle": "View and edit your account information",
+  "appearanceAndLanguage": "Appearance & Language",
+  "appearanceAndLanguageSubtitle": "Set your theme, language and appearance preferences",
+  "notificationPreferences": "Notification Preferences",
+  "notificationPreferencesSubtitle": "Manage email and system notifications",
+  "systemAndSupport": "System & Support",
+  "systemAndSupportSubtitle": "App information, help and support",
+  "securityAndAccount": "Security & Account",
+  "securityAndAccountSubtitle": "Password change and account management",
+  
+  "systemNotifications": "System Notifications",
+  "systemNotificationsSubtitle": "Turn all notifications on/off",
+  "emailNotifications": "Email Notifications",
+  "emailNotificationsSubtitle": "Receive notifications via email",
+  
+  "appVersion": "App Version",
+  "storageUsage": "Storage Usage",
+  "helpAndSupport": "Help & Support",
+  "bugReport": "Bug Report",
+  "changePassword": "Change Password",
+  
+  "save": "Save",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "yes": "Yes",
+  "no": "No",
+  "close": "Close",
+  "edit": "Edit",
+  "delete": "Delete",
+  "add": "Add",
+  "update": "Update",
+  
+  "newApplication": "New Application",
+  "appointmentReminder": "Appointment Reminder",
+  "applicationApproved": "Application Approved",
+  "systemUpdate": "System Update",
+  
+  "viewAll": "View All",
+  "markAllAsRead": "Mark All as Read",
+  "notificationSettings": "Notification Settings",
+  
+  "performanceIndicators": "Performance Indicators",
+  "conversionRate": "Conversion Rate",
+  "averageProcessingTime": "Average Processing Time",
+  "customerSatisfaction": "Customer Satisfaction",
+  "monthlyGrowth": "Monthly Growth",
+  
+  "totalCustomers": "Total Customers",
+  "totalApplications": "Total Applications",
+  "assignedApplications": "My Assigned Applications",
+  
+  "applicationStatusDistribution": "Application Status Distribution",
+  "allRecentApplications": "All Recent Applications",
+  "assignedRecentApplications": "Your Assigned Recent Applications",
+  "reminders": "Reminders",
+  "noReminders": "No reminders found.",
+  
+  "quickAccess": "Quick Access",
+  "trash": "Trash",
+  "automation": "Automation",
+  "taskManagement": "Task Management",
+  "advancedReporting": "Advanced Reporting",
+  "messages": "Messages",
+  "globalSearch": "Global Search",
+  
+  "settingsSaved": "Settings saved!",
+  "settingsError": "Error saving settings: {error}",
+  
+  "darkThemeActive": "Dark theme active!",
+  "lightThemeActive": "Light theme active!",
+  
+  "languageChanged": "Language changed!",
+  "themeColorSelection": "Theme color selection coming soon!",
+  
+  "versionInfo": "Version Information",
+  "storageInfo": "Storage Information",
+  "helpDialog": "Help & Support",
+  "bugReportDialog": "Bug Report",
+  "logoutConfirm": "Logout",
+  "logoutMessage": "Are you sure you want to logout?"
+}

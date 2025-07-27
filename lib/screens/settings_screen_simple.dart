@@ -1,9 +1,15 @@
 import 'package:crm/models/kullanici_model.dart';
+import 'package:crm/models/kullanici_model.dart';
 import 'package:crm/services/auth_service.dart';
 import 'package:crm/services/kullanici_servisi.dart';
+import 'package:crm/services/theme_service.dart';
+import 'package:crm/services/localization_service.dart';
+import 'package:crm/services/fcm_service.dart';
 import 'package:crm/screens/profil_ekrani.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:crm/generated/l10n/app_localizations.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -92,12 +98,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ayarlar'),
+        title: Text(AppLocalizations.of(context)!.settings),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: _saveSettings,
-            tooltip: 'Ayarları Kaydet',
+            tooltip: AppLocalizations.of(context)!.save,
           ),
         ],
       ),
@@ -136,9 +142,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.person,
-              title: 'Profil Bilgileri',
+              title: AppLocalizations.of(context)!.profileInfo,
               color: Colors.blue,
-              subtitle: 'Hesap bilgilerinizi görüntüleyin ve düzenleyin',
+              subtitle: AppLocalizations.of(context)!.profileInfoSubtitle,
             ),
             const SizedBox(height: 16),
             ListTile(
@@ -192,33 +198,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _buildSectionHeader(
               icon: Icons.palette,
-              title: 'Görünüm ve Dil',
+              title: AppLocalizations.of(context)!.appearanceAndLanguage,
               color: Colors.purple,
-              subtitle: 'Tema, dil ve görünüm tercihlerinizi ayarlayın',
+              subtitle: AppLocalizations.of(context)!.appearanceAndLanguageSubtitle,
             ),
             const SizedBox(height: 16),
-            _buildModernSwitchTile(
-              icon: Icons.dark_mode,
-              title: 'Karanlık Tema',
-              subtitle: 'Gece modu aktif/pasif',
-              value: _darkMode,
-              onChanged: (value) {
-                setState(() => _darkMode = value);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(value ? 'Karanlık tema aktif (Yakında!)' : 'Açık tema aktif'),
-                    backgroundColor: value ? Colors.grey[800] : Colors.blue,
-                  ),
+            Consumer<ThemeService>(
+              builder: (context, themeService, child) {
+                return _buildModernSwitchTile(
+                  icon: Icons.dark_mode,
+                  title: AppLocalizations.of(context)!.darkTheme,
+                  subtitle: 'Gece modu aktif/pasif',
+                  value: themeService.isDarkMode,
+                  onChanged: (value) async {
+                    await themeService.toggleTheme();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(value 
+                              ? AppLocalizations.of(context)!.darkThemeActive 
+                              : AppLocalizations.of(context)!.lightThemeActive),
+                          backgroundColor: value ? Colors.grey[800] : Colors.blue,
+                        ),
+                      );
+                    }
+                  },
+                  iconColor: Colors.indigo,
                 );
               },
-              iconColor: Colors.indigo,
             ),
-            _buildModernListTile(
-              icon: Icons.language,
-              title: 'Dil Seçimi',
-              subtitle: _getLanguageName(_language),
-              onTap: () => _showLanguagePicker(),
-              iconColor: Colors.green,
+            Consumer<LocalizationService>(
+              builder: (context, localizationService, child) {
+                return _buildModernListTile(
+                  icon: Icons.language,
+                  title: AppLocalizations.of(context)!.language,
+                  subtitle: localizationService.getLanguageName(localizationService.locale.languageCode),
+                  onTap: () => _showLanguagePicker(localizationService),
+                  iconColor: Colors.green,
+                );
+              },
             ),
             _buildModernListTile(
               icon: Icons.color_lens,
@@ -354,10 +372,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildModernListTile(
               icon: Icons.bug_report,
-              title: 'Hata Bildirimi',
+              title: AppLocalizations.of(context)!.bugReport,
               subtitle: 'Sorun ve önerilerinizi bildirin',
               onTap: () => _showBugReportDialog(),
               iconColor: Colors.orange,
+            ),
+            Consumer<FCMService>(
+              builder: (context, fcmService, child) {
+                return _buildModernListTile(
+                  icon: Icons.notifications_active,
+                  title: 'Test Bildirimi',
+                  subtitle: 'FCM bildirim sistemini test edin',
+                  onTap: () {
+                    fcmService.sendTestNotification();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)!.language == 'Dil' 
+                              ? 'Test bildirimi gönderildi!' 
+                              : 'Test notification sent!'
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  },
+                  iconColor: Colors.purple,
+                );
+              },
             ),
           ],
         ),
@@ -574,33 +615,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   // Dialog Methods
-  void _showLanguagePicker() {
+  void _showLanguagePicker(LocalizationService localizationService) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Dil Seç'),
+        title: Text(AppLocalizations.of(context)!.language),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             RadioListTile<String>(
-              title: const Text('Türkçe'),
+              title: Text(AppLocalizations.of(context)!.turkish),
               value: 'tr',
-              groupValue: _language,
-              onChanged: (value) {
-                setState(() => _language = value!);
-                Navigator.of(context).pop();
+              groupValue: localizationService.locale.languageCode,
+              onChanged: (value) async {
+                await localizationService.setLocale(const Locale('tr', 'TR'));
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(AppLocalizations.of(context)!.languageChanged)),
+                  );
+                }
               },
             ),
             RadioListTile<String>(
-              title: const Text('English'),
+              title: Text(AppLocalizations.of(context)!.english),
               value: 'en',
-              groupValue: _language,
-              onChanged: (value) {
-                setState(() => _language = value!);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('English language support coming soon!')),
-                );
+              groupValue: localizationService.locale.languageCode,
+              onChanged: (value) async {
+                await localizationService.setLocale(const Locale('en', 'US'));
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(AppLocalizations.of(context)!.languageChanged)),
+                  );
+                }
               },
             ),
           ],

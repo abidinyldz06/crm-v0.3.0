@@ -32,10 +32,13 @@ import 'package:crm/screens/advanced_reporting_screen.dart';
 import 'package:crm/screens/musteri_ekle.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/screens/mesajlar_ekrani.dart';
+import 'package:crm/generated/l10n/app_localizations.dart';
+import 'package:crm/services/fcm_service.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 class DashboardV2 extends StatefulWidget {
   const DashboardV2({super.key});
@@ -129,7 +132,7 @@ class _DashboardV2State extends State<DashboardV2> {
           // Web Arayüzü (Mevcut kod)
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Vize Danışmanlık CRM'),
+              title: Text(AppLocalizations.of(context)!.appTitle),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search),
@@ -170,32 +173,32 @@ class _DashboardV2State extends State<DashboardV2> {
                     NavigationRailDestination(
                       icon: Icon(Icons.home_outlined),
                       selectedIcon: Icon(Icons.home),
-                      label: Text('Ana Sayfa'),
+                      label: Text(AppLocalizations.of(context)!.dashboard),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.people_outlined),
                       selectedIcon: Icon(Icons.people),
-                      label: Text('Müşteriler'),
+                      label: Text(AppLocalizations.of(context)!.customers),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.assignment_outlined),
                       selectedIcon: Icon(Icons.assignment),
-                      label: Text('Başvurular'),
+                      label: Text(AppLocalizations.of(context)!.applications),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.calendar_month_outlined),
                       selectedIcon: Icon(Icons.calendar_month),
-                      label: Text('Takvim'),
+                      label: Text(AppLocalizations.of(context)!.calendar),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.analytics_outlined),
                       selectedIcon: Icon(Icons.analytics),
-                      label: Text('Raporlar'),
+                      label: Text(AppLocalizations.of(context)!.reports),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.settings_outlined),
                       selectedIcon: Icon(Icons.settings),
-                      label: Text('Ayarlar'),
+                      label: Text(AppLocalizations.of(context)!.settings),
                     ),
                   ],
                 ),
@@ -272,36 +275,39 @@ class _DashboardV2State extends State<DashboardV2> {
   }
 
   Widget _buildNotificationButton() {
-    return PopupMenuButton<String>(
-      icon: Stack(
-        children: [
-          const Icon(Icons.notifications_outlined),
-          Positioned(
-            right: 0,
-            top: 0,
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              constraints: const BoxConstraints(
-                minWidth: 12,
-                minHeight: 12,
-              ),
-              child: const Text(
-                '3',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
+    return Consumer<FCMService>(
+      builder: (context, fcmService, child) {
+        return PopupMenuButton<String>(
+          icon: Stack(
+            children: [
+              const Icon(Icons.notifications_outlined),
+              if (fcmService.unreadCount > 0)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 12,
+                      minHeight: 12,
+                    ),
+                    child: Text(
+                      fcmService.unreadCount > 99 ? '99+' : fcmService.unreadCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
       tooltip: 'Bildirimler',
       offset: const Offset(0, 40),
       itemBuilder: (BuildContext context) => [
@@ -314,9 +320,9 @@ class _DashboardV2State extends State<DashboardV2> {
               children: [
                 const Icon(Icons.notifications, color: Colors.blue),
                 const SizedBox(width: 8),
-                const Text(
-                  'Bildirimler',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.notifications,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -327,95 +333,103 @@ class _DashboardV2State extends State<DashboardV2> {
                     Navigator.of(context).pop();
                     _showAllNotifications();
                   },
-                  child: const Text('Tümünü Gör'),
+                  child: Text(AppLocalizations.of(context)!.viewAll),
                 ),
               ],
             ),
           ),
         ),
         const PopupMenuDivider(),
-        ..._getNotificationItems(),
+        ..._getNotificationItems(fcmService),
         const PopupMenuDivider(),
         PopupMenuItem<String>(
-          value: 'settings',
-          child: const Row(
+          value: 'test',
+          child: Row(
             children: [
-              Icon(Icons.settings, size: 20),
-              SizedBox(width: 8),
-              Text('Bildirim Ayarları'),
+              const Icon(Icons.bug_report, size: 20, color: Colors.orange),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.language == 'Dil' ? 'Test Bildirimi' : 'Test Notification'),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'settings',
+          child: Row(
+            children: [
+              const Icon(Icons.settings, size: 20),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.notificationSettings),
             ],
           ),
         ),
       ],
       onSelected: (String value) {
+        print('PopupMenu onSelected çağrıldı: $value');
         if (value == 'settings') {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SettingsScreen()),
           );
+        } else if (value == 'test') {
+          fcmService.sendTestNotification();
         } else if (value.startsWith('notification_')) {
-          _handleNotificationTap(value);
+          print('Bildirim seçildi: $value');
+          _handleNotificationTap(value, fcmService);
+        } else {
+          print('Bilinmeyen değer: $value');
         }
+      },
+        );
       },
     );
   }
 
-  List<PopupMenuEntry<String>> _getNotificationItems() {
-    final notifications = [
-      {
-        'id': 'notification_1',
-        'title': 'Yeni Başvuru',
-        'message': 'Ahmet Yılmaz yeni başvuru oluşturdu',
-        'time': '5 dk önce',
-        'icon': Icons.assignment,
-        'color': Colors.blue,
-        'unread': true,
-      },
-      {
-        'id': 'notification_2',
-        'title': 'Randevu Hatırlatması',
-        'message': 'Yarın saat 14:00\'te Mehmet Demir ile randevu',
-        'time': '1 saat önce',
-        'icon': Icons.schedule,
-        'color': Colors.orange,
-        'unread': true,
-      },
-      {
-        'id': 'notification_3',
-        'title': 'Başvuru Onaylandı',
-        'message': 'Ayşe Kaya\'nın başvurusu onaylandı',
-        'time': '2 saat önce',
-        'icon': Icons.check_circle,
-        'color': Colors.green,
-        'unread': true,
-      },
-      {
-        'id': 'notification_4',
-        'title': 'Sistem Güncellemesi',
-        'message': 'CRM sistemi v0.2.3 güncellendi',
-        'time': '1 gün önce',
-        'icon': Icons.system_update,
-        'color': Colors.purple,
-        'unread': false,
-      },
-    ];
+  List<PopupMenuEntry<String>> _getNotificationItems(FCMService fcmService) {
+    final notifications = fcmService.notifications.take(4).toList();
+
+    if (notifications.isEmpty) {
+      return [
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: Text(
+                AppLocalizations.of(context)!.language == 'Dil' 
+                    ? 'Henüz bildirim yok' 
+                    : 'No notifications yet',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+            ),
+          ),
+        ),
+      ];
+    }
 
     return notifications.map((notification) {
+      final DateTime timestamp = DateTime.parse(notification['timestamp']);
+      final String timeAgo = _getTimeAgo(timestamp);
+      
       return PopupMenuItem<String>(
-        value: notification['id'] as String,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
+        value: 'notification_${notification['id']}',
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).pop(); // Popup'ı kapat
+            _handleNotificationTap('notification_${notification['id']}', fcmService);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: (notification['color'] as Color).withOpacity(0.1),
+                  color: fcmService.getNotificationColor(notification['type']).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
-                  notification['icon'] as IconData,
-                  color: notification['color'] as Color,
+                  fcmService.getNotificationIcon(notification['type']),
+                  color: fcmService.getNotificationColor(notification['type']),
                   size: 16,
                 ),
               ),
@@ -430,14 +444,14 @@ class _DashboardV2State extends State<DashboardV2> {
                           child: Text(
                             notification['title'] as String,
                             style: TextStyle(
-                              fontWeight: (notification['unread'] as bool) 
+                              fontWeight: !(notification['isRead'] as bool) 
                                   ? FontWeight.bold 
                                   : FontWeight.normal,
                               fontSize: 13,
                             ),
                           ),
                         ),
-                        if (notification['unread'] as bool)
+                        if (!(notification['isRead'] as bool))
                           Container(
                             width: 8,
                             height: 8,
@@ -450,7 +464,7 @@ class _DashboardV2State extends State<DashboardV2> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      notification['message'] as String,
+                      notification['body'] as String,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -460,7 +474,7 @@ class _DashboardV2State extends State<DashboardV2> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      notification['time'] as String,
+                      timeAgo,
                       style: TextStyle(
                         color: Colors.grey[500],
                         fontSize: 11,
@@ -472,37 +486,85 @@ class _DashboardV2State extends State<DashboardV2> {
             ],
           ),
         ),
+        ),
       );
     }).toList();
   }
 
-  void _handleNotificationTap(String notificationId) {
-    // Bildirime tıklandığında yapılacak işlemler
-    switch (notificationId) {
-      case 'notification_1':
-        // Yeni başvuru bildirimine tıklandı - Başvurular sayfasına git
-        setState(() => _selectedIndex = 2);
-        break;
-      case 'notification_2':
-        // Randevu hatırlatmasına tıklandı - Takvim sayfasına git
-        setState(() => _selectedIndex = 3);
-        break;
-      case 'notification_3':
-        // Başvuru onayına tıklandı - Başvurular sayfasına git
-        setState(() => _selectedIndex = 2);
-        break;
-      case 'notification_4':
-        // Sistem güncellemesine tıklandı - Ayarlar sayfasına git
-        setState(() => _selectedIndex = 5);
-        break;
-    }
+  String _getTimeAgo(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Bildirim açıldı: $notificationId'),
-        duration: const Duration(seconds: 2),
-      ),
+    if (difference.inMinutes < 1) {
+      return AppLocalizations.of(context)!.language == 'Dil' ? 'Şimdi' : 'Now';
+    } else if (difference.inMinutes < 60) {
+      return AppLocalizations.of(context)!.language == 'Dil' 
+          ? '${difference.inMinutes} dk önce' 
+          : '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return AppLocalizations.of(context)!.language == 'Dil' 
+          ? '${difference.inHours} saat önce' 
+          : '${difference.inHours}h ago';
+    } else {
+      return AppLocalizations.of(context)!.language == 'Dil' 
+          ? '${difference.inDays} gün önce' 
+          : '${difference.inDays}d ago';
+    }
+  }
+
+  void _handleNotificationTap(String notificationValue, FCMService fcmService) {
+    // notification_ prefix'ini kaldır
+    final notificationId = notificationValue.replaceFirst('notification_', '');
+    print('Bildirime tıklandı: $notificationId');
+    
+    // Bildirimi okundu olarak işaretle
+    fcmService.markAsRead(notificationId);
+    print('Bildirim okundu olarak işaretlendi');
+    
+    // Bildirim tipine göre sayfa yönlendirmesi
+    final notification = fcmService.notifications.firstWhere(
+      (n) => n['id'] == notificationId,
+      orElse: () => {},
     );
+    
+    if (notification.isNotEmpty) {
+      final type = notification['type'] as String;
+      
+      switch (type) {
+        case 'application':
+          setState(() => _selectedIndex = 2); // Başvurular
+          break;
+        case 'appointment':
+          setState(() => _selectedIndex = 3); // Takvim
+          break;
+        case 'approval':
+          setState(() => _selectedIndex = 2); // Başvurular
+          break;
+        case 'system':
+          setState(() => _selectedIndex = 5); // Ayarlar
+          break;
+        case 'message':
+          // Mesajlar sayfası henüz yok, ana sayfada kal
+          break;
+        case 'test':
+          // Test bildirimi, hiçbir şey yapma
+          break;
+        default:
+          // Varsayılan olarak ana sayfada kal
+          break;
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.language == 'Dil' 
+                ? 'Bildirim açıldı: ${notification['title']}' 
+                : 'Notification opened: ${notification['title']}'
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   void _showAllNotifications() {

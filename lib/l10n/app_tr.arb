@@ -1,0 +1,121 @@
+{
+  "@@locale": "tr",
+  "appTitle": "Vize Danışmanlık CRM",
+  "@appTitle": {
+    "description": "Uygulamanın başlığı"
+  },
+  
+  "login": "Giriş Yap",
+  "logout": "Çıkış Yap",
+  "email": "E-posta",
+  "password": "Şifre",
+  "forgotPassword": "Şifremi Unuttum",
+  
+  "dashboard": "Ana Sayfa",
+  "customers": "Müşteriler",
+  "applications": "Başvurular",
+  "calendar": "Takvim",
+  "reports": "Raporlar",
+  "settings": "Ayarlar",
+  
+  "notifications": "Bildirimler",
+  "profile": "Profil",
+  "search": "Arama",
+  "help": "Yardım",
+  "support": "Destek",
+  
+  "darkTheme": "Karanlık Tema",
+  "lightTheme": "Açık Tema",
+  "language": "Dil",
+  "turkish": "Türkçe",
+  "english": "İngilizce",
+  
+  "profileInfo": "Profil Bilgileri",
+  "profileInfoSubtitle": "Hesap bilgilerinizi görüntüleyin ve düzenleyin",
+  "appearanceAndLanguage": "Görünüm ve Dil",
+  "appearanceAndLanguageSubtitle": "Tema, dil ve görünüm tercihlerinizi ayarlayın",
+  "notificationPreferences": "Bildirim Tercihleri",
+  "notificationPreferencesSubtitle": "E-posta ve sistem bildirimlerini yönetin",
+  "systemAndSupport": "Sistem ve Destek",
+  "systemAndSupportSubtitle": "Uygulama bilgileri, yardım ve destek",
+  "securityAndAccount": "Güvenlik ve Hesap",
+  "securityAndAccountSubtitle": "Şifre değiştirme ve hesap yönetimi",
+  
+  "systemNotifications": "Sistem Bildirimleri",
+  "systemNotificationsSubtitle": "Tüm bildirimleri aç/kapat",
+  "emailNotifications": "E-posta Bildirimleri",
+  "emailNotificationsSubtitle": "E-posta ile bildirim al",
+  
+  "appVersion": "Uygulama Sürümü",
+  "storageUsage": "Depolama Kullanımı",
+  "helpAndSupport": "Yardım ve Destek",
+  "bugReport": "Hata Bildirimi",
+  "changePassword": "Şifre Değiştir",
+  
+  "save": "Kaydet",
+  "cancel": "İptal",
+  "ok": "Tamam",
+  "yes": "Evet",
+  "no": "Hayır",
+  "close": "Kapat",
+  "edit": "Düzenle",
+  "delete": "Sil",
+  "add": "Ekle",
+  "update": "Güncelle",
+  
+  "newApplication": "Yeni Başvuru",
+  "appointmentReminder": "Randevu Hatırlatması",
+  "applicationApproved": "Başvuru Onaylandı",
+  "systemUpdate": "Sistem Güncellemesi",
+  
+  "viewAll": "Tümünü Gör",
+  "markAllAsRead": "Tümünü Okundu İşaretle",
+  "notificationSettings": "Bildirim Ayarları",
+  
+  "performanceIndicators": "Performans Göstergeleri",
+  "conversionRate": "Dönüşüm Oranı",
+  "averageProcessingTime": "Ortalama İşlem Süresi",
+  "customerSatisfaction": "Müşteri Memnuniyeti",
+  "monthlyGrowth": "Aylık Büyüme",
+  
+  "totalCustomers": "Toplam Müşteri",
+  "totalApplications": "Toplam Başvuru",
+  "assignedApplications": "Atanan Başvurularım",
+  
+  "applicationStatusDistribution": "Başvuru Durumu Dağılımı",
+  "allRecentApplications": "Tüm Son Başvurular",
+  "assignedRecentApplications": "Size Atanan Son Başvurular",
+  "reminders": "Hatırlatıcılar",
+  "noReminders": "Hatırlatıcı bulunmuyor.",
+  
+  "quickAccess": "Hızlı Erişim",
+  "trash": "Çöp Kutusu",
+  "automation": "Otomasyon",
+  "taskManagement": "Görev Yönetimi",
+  "advancedReporting": "Gelişmiş Raporlama",
+  "messages": "Mesajlar",
+  "globalSearch": "Global Arama",
+  
+  "settingsSaved": "Ayarlar kaydedildi!",
+  "settingsError": "Ayarlar kaydedilirken hata: {error}",
+  "@settingsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "darkThemeActive": "Karanlık tema aktif!",
+  "lightThemeActive": "Açık tema aktif!",
+  
+  "languageChanged": "Dil değiştirildi!",
+  "themeColorSelection": "Tema rengi seçimi yakında eklenecek!",
+  
+  "versionInfo": "Sürüm Bilgisi",
+  "storageInfo": "Depolama Bilgisi",
+  "helpDialog": "Yardım ve Destek",
+  "bugReportDialog": "Hata Raporu",
+  "logoutConfirm": "Çıkış Yap",
+  "logoutMessage": "Hesaptan çıkış yapmak istediğinizden emin misiniz?"
+}
