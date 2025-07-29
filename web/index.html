@@ -1,38 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
+  
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vize Danışmanlık CRM v0.2.5 - Real-time Bildirimler ve Gelişmiş Müşteri Yönetimi">
+  <meta name="keywords" content="CRM, Real-time, Bildirimler, Müşteri Yönetimi, Vize Danışmanlık">
+  
+  <!-- PWA meta tags -->
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="crm">
+  <meta name="apple-mobile-web-app-title" content="Vize CRM v0.2.5">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
+  
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>crm</title>
+  
+  <title>Vize CRM v0.2.5 - Real-time Notifications</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- Firebase Cloud Messaging -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+  
+  <!-- Loading screen styles -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Roboto', sans-serif;
+    }
+    
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: 9999;
+    }
+    
+    .loading-logo {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    
+    .loading-logo::after {
+      content: '🔔';
+      font-size: 24px;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff4757;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 28px;
+      font-weight: 300;
+      margin-bottom: 8px;
+    }
+    
+    .loading-version {
+      color: rgba(255,255,255,0.8);
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
+    }
+  </style>
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loading" class="loading-container">
+    <div class="loading-logo">
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#667eea"/>
+        <path d="M2 17L12 22L22 17" stroke="#667eea" stroke-width="2"/>
+        <path d="M2 12L12 17L22 12" stroke="#667eea" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="loading-text">Vize CRM</div>
+    <div class="loading-version">v0.2.5 Real-time Edition</div>
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      const loading = document.getElementById('loading');
+      loading.classList.add('fade-out');
+      setTimeout(() => loading.remove(), 500);
+    });
+  </script>
+  
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

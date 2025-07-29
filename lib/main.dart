@@ -6,6 +6,7 @@ import 'package:crm/services/fcm_service.dart';
 import 'package:crm/theme_v2.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:crm/screens/dashboard_v2.dart';
 import 'package:crm/screens/musteri_detay.dart';
@@ -27,12 +28,20 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  
+  // Web platformunda Firebase Messaging desteği sınırlı
+  if (!kIsWeb) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
   
   // Theme, Localization ve FCM service'lerini initialize et
   await ThemeService().init();
   await LocalizationService().init();
-  await FCMService().initialize();
+  
+  // FCM sadece web olmayan platformlarda initialize et
+  if (!kIsWeb) {
+    await FCMService().initialize();
+  }
   
   runApp(const MyApp());
 }
