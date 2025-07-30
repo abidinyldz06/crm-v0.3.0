@@ -1,10 +1,10 @@
 # 🚀 Vize CRM v0.2.5 Real-time Edition
 
-[![Deploy to GitHub Pages](https://github.com/abidinyldz06/crmwebdeneme/actions/workflows/deploy.yml/badge.svg)](https://github.com/abidinyldz06/crmwebdeneme/actions/workflows/deploy.yml)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR_SITE_ID/deploy-status.svg)](https://app.netlify.com/sites/YOUR_SITE_NAME/deploys)
 
 **Modern, Real-time Müşteri İlişkileri Yönetim Sistemi**
 
-🌐 **Live Demo**: [https://abidinyldz06.github.io/crmwebdeneme/](https://abidinyldz06.github.io/crmwebdeneme/)
+🌐 **Live Demo**: Netlify'de deploy ediliyor...
 
 ## ✨ Özellikler
 

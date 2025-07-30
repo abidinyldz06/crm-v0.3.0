@@ -1,10 +1,11 @@
 [build]
   publish = "build/web"
-  command = "flutter build web --release --base-href / --no-tree-shake-icons"
+  command = "chmod +x build.sh && ./build.sh"
 
 [build.environment]
   FLUTTER_WEB = "true"
   FLUTTER_VERSION = "3.32.8"
+  FLUTTER_ROOT = "/opt/buildhome/.flutter"
 
 [[redirects]]
   from = "/*"
