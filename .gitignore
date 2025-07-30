@@ -35,9 +35,8 @@ firestore-debug.log
 # Dependencies
 node_modules/
 
-# Build outputs (except web for GitHub Pages)
+# Build outputs - Netlify will build automatically
 build/
-!build/web/
 
 # Test coverage
 coverage/

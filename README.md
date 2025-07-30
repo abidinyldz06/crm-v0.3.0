@@ -52,16 +52,21 @@ flutter build web --release --base-href "/crm-web/"
 
 ## 🌐 Deployment
 
-### GitHub Pages (Otomatik)
-1. Repository'yi fork et veya clone et
-2. GitHub'da repository oluştur
-3. Code'u push et
-4. GitHub Actions otomatik deploy eder
+### Netlify (Otomatik) - Önerilen
+1. Repository'yi GitHub'a push et
+2. Netlify'de "New site from Git" seç
+3. Repository'yi bağla
+4. Build settings otomatik algılanır (netlify.toml sayesinde)
+5. Deploy et!
+
+**Build Command**: `flutter build web --release --base-href / --no-tree-shake-icons`  
+**Publish Directory**: `build/web`
 
 ### Manuel Deployment
 ```bash
-# Deployment script'i çalıştır
-deploy_github.bat
+# Local build için
+flutter build web --release --base-href / --no-tree-shake-icons
+# build/web klasörünü Netlify'e upload et
 ```
 
 ## 📱 Ekran Görüntüleri
