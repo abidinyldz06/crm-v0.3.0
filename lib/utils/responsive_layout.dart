@@ -49,5 +49,5 @@ extension ResponsiveExtension on BuildContext {
   bool get isDesktop => MediaQuery.of(this).size.width >= ResponsiveBreakpoints.desktop;
   
   double get screenWidth => MediaQuery.of(this).size.width;
-  double get screenHeight => MediaQuery.of(this).size.width;
+  double get screenHeight => MediaQuery.of(this).size.height;
 }

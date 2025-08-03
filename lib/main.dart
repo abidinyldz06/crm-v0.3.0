@@ -11,12 +11,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:crm/screens/dashboard_v2.dart';
 import 'package:crm/screens/musteri_detay.dart';
 import 'package:crm/screens/basvuru_detay.dart';
+import 'package:crm/screens/musteri_ekle.dart';
 import 'package:crm/services/musteri_servisi.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:crm/generated/l10n/app_localizations.dart';
+import 'package:crm/routes/route_generator.dart';
+import 'package:crm/routes/route_names.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -77,37 +80,7 @@ class MyApp extends StatelessWidget {
               Locale('en', 'US'),
             ],
             home: const AuthWrapper(),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/musteri_detay':
-            final musteriId = settings.arguments as String;
-            return MaterialPageRoute(
-              builder: (context) => FutureBuilder(
-                future: MusteriServisi().musteriGetir(musteriId),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  if (snapshot.hasData && snapshot.data != null) {
-                    return MusteriDetay(musteriId: snapshot.data!.id);
-                  }
-                  return const Scaffold(
-                    body: Center(child: Text('Müşteri bulunamadı')),
-                  );
-                },
-              ),
-            );
-          case '/basvuru_detay':
-            final basvuruId = settings.arguments as String;
-            return MaterialPageRoute(
-              builder: (context) => BasvuruDetay(basvuruId: basvuruId),
-            );
-          default:
-            return null;
-        }
-      },
+            onGenerateRoute: RouteGenerator.onGenerateRoute,
           );
         },
       ),

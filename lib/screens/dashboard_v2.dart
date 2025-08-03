@@ -40,6 +40,93 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
+/// Dashboard bölüm bileşeni (top-level)
+class _DashboardSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final List<Widget>? actions;
+  const _DashboardSection({required this.title, required this.child, this.actions});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                if (actions != null) ...actions!,
+              ],
+            ),
+            const SizedBox(height: 12),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// KPI kartı (top-level)
+class _KpiCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String value;
+  final String label;
+  const _KpiCard({required this.icon, required this.iconColor, required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SizedBox(
+      width: 260,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                child: Icon(icon, color: iconColor, size: 24),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      value,
+                      style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      label,
+                      style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class DashboardV2 extends StatefulWidget {
   const DashboardV2({super.key});
 
@@ -84,13 +171,14 @@ class _DashboardV2State extends State<DashboardV2> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool isMobile = constraints.maxWidth < 650; // Breakpoint'i biraz ayarladım
+        final bool isMobile = constraints.maxWidth < 768; // ResponsiveBreakpoints.mobile ile hizalı
 
         if (isMobile) {
           // Mobil Arayüz
           return Scaffold(
             appBar: AppBar(
               title: Text(_getScreenTitle(isMobile: true)),
+              centerTitle: false,
               actions: [
                 if (_selectedIndex >= 4) // Eğer seçili sekme menüde değilse, başlıkta göster
                   const SizedBox.shrink(),
@@ -133,10 +221,11 @@ class _DashboardV2State extends State<DashboardV2> {
           return Scaffold(
             appBar: AppBar(
               title: Text(AppLocalizations.of(context)!.appTitle),
+              centerTitle: false,
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search),
-                  tooltip: 'Global Arama',
+                  tooltip: AppLocalizations.of(context)!.globalSearch,
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => const GlobalSearchScreen()),
@@ -154,13 +243,14 @@ class _DashboardV2State extends State<DashboardV2> {
                       );
                     }
                   },
-                  tooltip: 'Çıkış Yap',
+                  tooltip: AppLocalizations.of(context)!.logout,
                 ),
               ],
             ),
             body: Row(
               children: [
                 NavigationRail(
+                  minExtendedWidth: 200,
                   selectedIndex: _selectedIndex,
                   onDestinationSelected: (int index) {
                     setState(() {
@@ -212,7 +302,7 @@ class _DashboardV2State extends State<DashboardV2> {
                 ? FloatingActionButton.extended(
                     heroTag: "dashboard_web_fab",
                     onPressed: () => _showMusteriEkleSecenekleri(context),
-                    label: const Text('Müşteri Ekle'),
+                    label: Text(AppLocalizations.of(context)!.addCustomer),
                     icon: const Icon(Icons.person_add),
                   )
                 : null,
@@ -223,23 +313,24 @@ class _DashboardV2State extends State<DashboardV2> {
   }
 
   String _getScreenTitle({bool isMobile = false}) {
-     if (isMobile) {
+    final loc = AppLocalizations.of(context)!;
+    if (isMobile) {
       switch (_selectedIndex) {
-        case 0: return 'Ana Sayfa';
-        case 1: return 'Müşteriler';
-        case 2: return 'Başvurular';
-        case 3: return 'Takvim';
-        case 4: return 'Çöp Kutusu';
-        case 5: return 'Raporlar';
-        case 6: return 'Otomasyon';
-        case 7: return 'Görev Yönetimi';
-        case 8: return 'Gelişmiş Raporlama';
-        case 9: return 'Finans';
-        case 10: return 'Mesajlar';
-        default: return 'CRM';
+        case 0: return loc.mobileHome;
+        case 1: return loc.mobileCustomers;
+        case 2: return loc.mobileApplications;
+        case 3: return loc.mobileCalendar;
+        case 4: return loc.mobileTrash;
+        case 5: return loc.mobileReports;
+        case 6: return loc.mobileAutomation;
+        case 7: return loc.mobileTasks;
+        case 8: return loc.mobileAdvancedReporting;
+        case 9: return loc.mobileFinance;
+        case 10: return loc.messages;
+        default: return loc.appTitle;
       }
     }
-    return 'Vize Danışmanlık CRM'; // Web için sabit başlık
+    return loc.appTitle; // Web için sabit başlık (yerelleştirilmiş)
   }
 
   void _showMusteriEkleSecenekleri(BuildContext context) {
@@ -572,11 +663,11 @@ class _DashboardV2State extends State<DashboardV2> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.notifications, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('Tüm Bildirimler'),
+              const Icon(Icons.notifications, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(AppLocalizations.of(context)!.notifications),
             ],
           ),
           content: SizedBox(
@@ -586,49 +677,49 @@ class _DashboardV2State extends State<DashboardV2> {
               children: [
                 _buildNotificationTile(
                   icon: Icons.assignment,
-                  title: 'Yeni Başvuru',
-                  message: 'Ahmet Yılmaz yeni başvuru oluşturdu',
-                  time: '5 dk önce',
+                  title: AppLocalizations.of(context)!.newApplication,
+                  message: 'Ahmet Yılmaz', // örnek veri
+                  time: '5 dk',
                   color: Colors.blue,
                   unread: true,
                 ),
                 _buildNotificationTile(
                   icon: Icons.schedule,
-                  title: 'Randevu Hatırlatması',
-                  message: 'Yarın saat 14:00\'te Mehmet Demir ile randevu',
-                  time: '1 saat önce',
+                  title: AppLocalizations.of(context)!.appointmentReminder,
+                  message: '14:00 - Mehmet Demir', // örnek veri
+                  time: '1 saat',
                   color: Colors.orange,
                   unread: true,
                 ),
                 _buildNotificationTile(
                   icon: Icons.check_circle,
-                  title: 'Başvuru Onaylandı',
-                  message: 'Ayşe Kaya\'nın başvurusu onaylandı',
-                  time: '2 saat önce',
+                  title: AppLocalizations.of(context)!.applicationApproved,
+                  message: 'Ayşe Kaya', // örnek veri
+                  time: '2 saat',
                   color: Colors.green,
                   unread: true,
                 ),
                 _buildNotificationTile(
                   icon: Icons.system_update,
-                  title: 'Sistem Güncellemesi',
-                  message: 'CRM sistemi v0.2.3 güncellendi',
-                  time: '1 gün önce',
+                  title: AppLocalizations.of(context)!.systemUpdate,
+                  message: 'v0.2.3', // örnek veri
+                  time: '1 gün',
                   color: Colors.purple,
                   unread: false,
                 ),
                 _buildNotificationTile(
                   icon: Icons.person_add,
-                  title: 'Yeni Müşteri',
-                  message: 'Fatma Özkan sisteme eklendi',
-                  time: '2 gün önce',
+                  title: AppLocalizations.of(context)!.customers,
+                  message: 'Fatma Özkan', // örnek veri
+                  time: '2 gün',
                   color: Colors.teal,
                   unread: false,
                 ),
                 _buildNotificationTile(
                   icon: Icons.email,
-                  title: 'E-posta Gönderildi',
-                  message: 'Otomatik e-posta başarıyla gönderildi',
-                  time: '3 gün önce',
+                  title: AppLocalizations.of(context)!.emailNotifications,
+                  message: 'Auto email sent', // örnek veri
+                  time: '3 gün',
                   color: Colors.indigo,
                   unread: false,
                 ),
@@ -641,17 +732,17 @@ class _DashboardV2State extends State<DashboardV2> {
                 Navigator.of(context).pop();
                 // Tüm bildirimleri okundu olarak işaretle
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Tüm bildirimler okundu olarak işaretlendi'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.markAllAsRead),
                     backgroundColor: Colors.green,
                   ),
                 );
               },
-              child: const Text('Tümünü Okundu İşaretle'),
+              child: Text(AppLocalizations.of(context)!.markAllAsRead),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Kapat'),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );
@@ -773,13 +864,27 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
   final HatirlatmaServisi _hatirlatmaServisi = HatirlatmaServisi();
   // final KPIService _kpiService = KPIService(); // Geçici olarak devre dışı
 
+  // Özelleştirme ayarları (ileride eklenecek)
+  // DashboardSettings? _dashSettings;
+
   KullaniciModel? _currentUser;
   Stream<List<BasvuruModel>>? _basvurularStream;
+
+  // Basit KPI değerleri
+  String _kpiConversion = '—';
+  String _kpiAvgDays = '—';
+  String _kpiSatisfaction = '4.2/5'; // dummy örnek
+  String _kpiMonthlyGrowth = '+0%';
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    // Dashboard özelleştirme ayarları ileride eklenecek
+    // DashboardSettingsService().watchSettings().listen((s) {
+    //   if (!mounted) return;
+    //   setState(() => _dashSettings = s);
+    // });
   }
 
   void _loadUserData() async {
@@ -804,386 +909,369 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        // KPI Dashboard - Sadece admin için
-        if (_currentUser!.role == 'admin') ...[
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Performans Göstergeleri',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+    // Tema moduna göre degrade renkleri seç
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgStart = isDark ? const Color(0xFF0B274A) : const Color(0xFFF5F7FB);
+    final bgEnd = isDark ? const Color(0xFF0F3D6E) : const Color(0xFFE8EEF7);
+
+    // Kullanıcı özelleştirme ayarları (varsayılan aktif bölümler)
+    final enabled = {'kpi', 'statusPie', 'recentApplications', 'reminders', 'quickAccess'};
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [bgStart, bgEnd],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+        // Bölümleri sabit sırayla göster
+          if (enabled.contains('kpi') && _currentUser!.role == 'admin')
+            _DashboardSection(
+              title: AppLocalizations.of(context)!.performanceIndicators,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.file_download),
+                  tooltip: 'Rapor İndir',
+                  onPressed: _exportDashboardReport,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  tooltip: 'Yenile',
+                  onPressed: () => _refreshKpis(),
+                ),
+              ],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      children: [
+                        _KpiCard(
+                          icon: Icons.trending_up,
+                          iconColor: Colors.green,
+                          value: _kpiConversion,
+                          label: AppLocalizations.of(context)!.conversionRate,
+                        ),
+                        _KpiCard(
+                          icon: Icons.schedule,
+                          iconColor: Colors.blue,
+                          value: _kpiAvgDays,
+                          label: AppLocalizations.of(context)!.averageProcessingTime,
+                        ),
+                        _KpiCard(
+                          icon: Icons.star,
+                          iconColor: Colors.orange,
+                          value: _kpiSatisfaction,
+                          label: AppLocalizations.of(context)!.customerSatisfaction,
+                        ),
+                        _KpiCard(
+                          icon: Icons.trending_up,
+                          iconColor: Colors.purple,
+                          value: _kpiMonthlyGrowth,
+                          label: AppLocalizations.of(context)!.monthlyGrowth,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          // Başvuru Durumu Dağılımı
+          if (enabled.contains('statusPie')) 
+            _DashboardSection(
+              title: AppLocalizations.of(context)!.applicationStatusDistribution,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StreamBuilder<List<BasvuruModel>>(
+                  stream: _basvuruServisi.getTumBasvurularStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text(AppLocalizations.of(context)!.noApplicationsAdmin));
+                    }
+                    final basvurular = snapshot.data!;
+                    Map<BasvuruDurumu, int> statusCounts = {};
+                    for (var basvuru in basvurular) {
+                      statusCounts[basvuru.durum] = (statusCounts[basvuru.durum] ?? 0) + 1;
+                    }
+
+                    List<PieChartSectionData> sections = [];
+                    statusCounts.forEach((status, count) {
+                      double percentage = (count / basvurular.length) * 100;
+                      sections.add(
+                        PieChartSectionData(
+                          color: _getStatusColor(status),
+                          value: count.toDouble(),
+                          title: '${percentage.toStringAsFixed(1)}%',
+                          radius: 80,
+                          titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      );
+                    });
+
+                    return SizedBox(
+                      height: 220,
+                      child: PieChart(
+                        PieChartData(
+                          sections: sections,
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 40,
+                          borderData: FlBorderData(show: false),
+                          pieTouchData: PieTouchData(),
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.file_download),
-                            tooltip: 'Rapor İndir',
-                            onPressed: _exportDashboardReport,
+                    );
+                  },
+                ),
+              ),
+            ),
+          // Son Başvurular
+          if (enabled.contains('recentApplications'))
+            _DashboardSection(
+              title: _currentUser!.role == 'admin'
+                  ? AppLocalizations.of(context)!.allRecentApplications
+                  : AppLocalizations.of(context)!.assignedRecentApplications,
+              actions: [
+                TextButton.icon(
+                  onPressed: () => setState(() {}),
+                  icon: const Icon(Icons.refresh, size: 18),
+                  label: const Text('Yenile'),
+                )
+              ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: StreamBuilder<List<BasvuruModel>>(
+                  stream: _basvurularStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('Gösterilecek başvuru bulunmuyor.'));
+                    }
+                    final basvurular = snapshot.data!;
+                    final int itemCount = basvurular.length < 3 ? basvurular.length : 3;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: itemCount,
+                      itemBuilder: (context, index) {
+                        return BasvuruOzetCard(basvuru: basvurular[index]);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          // Hatırlatıcılar
+          if (enabled.contains('reminders'))
+            _DashboardSection(
+              title: AppLocalizations.of(context)!.reminders,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: StreamBuilder<List<HatirlatmaModel>>(
+                  stream: _hatirlatmaServisi.getDanismanHatirlatmalari(_currentUser!.uid),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(AppLocalizations.of(context)!.noReminders),
+                        ),
+                      );
+                    }
+                    final hatirlatmalar = snapshot.data!;
+                    final int itemCount = hatirlatmalar.length < 3 ? hatirlatmalar.length : 3;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: itemCount,
+                      itemBuilder: (context, index) {
+                        final hatirlatma = hatirlatmalar[index];
+                        final tarih = hatirlatma.hatirlatmaTarihi.toDate();
+                        final gecmis = DateTime.now().isAfter(tarih);
+                        return Card(
+                          color: gecmis ? Colors.red.shade50 : null,
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.alarm,
+                              color: gecmis ? Colors.red : Colors.orange,
+                            ),
+                            title: Text(hatirlatma.mesaj),
+                            subtitle: Text(
+                              '${tarih.day}/${tarih.month}/${tarih.year} ${tarih.hour}:${tarih.minute.toString().padLeft(2, '0')}',
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.check),
+                              onPressed: () async {
+                                await _hatirlatmaServisi.tamamlaHatirlatma(hatirlatma.id);
+                              },
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.refresh),
-                            tooltip: 'Yenile',
-                            onPressed: () => setState(() {}),
-                          ),
-                        ],
-                      ),
-                    ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          // Hızlı Erişim
+          if (enabled.contains('quickAccess'))
+            _DashboardSection(
+              title: AppLocalizations.of(context)!.quickAccess,
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.2,
+                children: [
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.trash,
+                    Icons.delete_outline,
+                    Colors.red,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const CopKutusuEkrani()),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  // Basit KPI Gösterimi
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.trending_up, size: 32, color: Colors.green),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '75%',
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text('Dönüşüm Oranı'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.schedule, size: 32, color: Colors.blue),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '12 gün',
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text('Ortalama İşlem Süresi'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.star, size: 32, color: Colors.orange),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '4.2/5',
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text('Müşteri Memnuniyeti'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Icon(Icons.trending_up, size: 32, color: Colors.purple),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      '+8%',
-                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                                    ),
-                                    const Text('Aylık Büyüme'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.automation,
+                    Icons.settings_outlined,
+                    Colors.purple,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => AutomationManagementScreen()),
+                    ),
+                  ),
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.taskManagement,
+                    Icons.task_outlined,
+                    Colors.blue,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const TaskManagementScreen()),
+                    ),
+                  ),
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.advancedReporting,
+                    Icons.assessment_outlined,
+                    Colors.green,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const AdvancedReportingScreenV2()),
+                    ),
+                  ),
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.messages,
+                    Icons.message_outlined,
+                    Colors.orange,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const MesajlarEkrani()),
+                    ),
+                  ),
+                  _buildQuickAccessCard(
+                    context,
+                    AppLocalizations.of(context)!.globalSearch,
+                    Icons.search,
+                    Colors.teal,
+                    () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const GlobalSearchScreen()),
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 24),
-          
-          // KPI Uyarıları geçici devre dışı
-          const SizedBox(height: 24),
+          // Hızlı Erişim sonu
         ],
-        
-        // Geleneksel Özet Kartları
-        LayoutBuilder(
-          builder: (context, constraints) {
-            return Wrap(
-              spacing: 16.0,
-              runSpacing: 16.0,
-              alignment: constraints.maxWidth < 400 ? WrapAlignment.center : WrapAlignment.start,
-              children: [
-                if (_currentUser!.role == 'admin')
-                  StreamBuilder<List<MusteriModel>>(
-                    stream: _musteriServisi.getMusterilerStream(),
-                    builder: (context, snapshot) {
-                      return OzetKarti(
-                        icon: Icons.people,
-                        title: 'Toplam Müşteri',
-                        count: snapshot.hasData ? snapshot.data!.length.toString() : '...', // Count is a string
-                        color: Colors.blue,
-                      );
-                    },
-                  ),
-                StreamBuilder<List<BasvuruModel>>(
-                  stream: _currentUser!.role == 'admin'
-                      ? _basvuruServisi.getTumBasvurularStream()
-                      : _basvuruServisi.getDanismaninBasvurulariStream(_currentUser!.uid),
-                  builder: (context, snapshot) {
-                     return OzetKarti(
-                      icon: Icons.article,
-                      title: _currentUser!.role == 'admin' ? 'Toplam Başvuru' : 'Atanan Başvurularım',
-                      count: snapshot.hasData ? snapshot.data!.length.toString() : '...',
-                      color: Colors.orange,
-                    );
-                  },
-                ),
-              ],
-            );
-          }
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Başvuru Durumu Dağılımı',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 16),
-        StreamBuilder<List<BasvuruModel>>(
-          stream: _basvuruServisi.getTumBasvurularStream(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Gösterilecek başvuru bulunmuyor.'));
-            }
-            final basvurular = snapshot.data!;
-            Map<BasvuruDurumu, int> statusCounts = {};
-            for (var basvuru in basvurular) {
-              statusCounts[basvuru.durum] = (statusCounts[basvuru.durum] ?? 0) + 1;
-            }
-
-            List<PieChartSectionData> sections = [];
-            statusCounts.forEach((status, count) {
-              double percentage = (count / basvurular.length) * 100;
-              sections.add(
-                PieChartSectionData(
-                  color: _getStatusColor(status),
-                  value: count.toDouble(),
-                  title: '${percentage.toStringAsFixed(1)}%',
-                  radius: 80,
-                  titleStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              );
-            });
-
-            return SizedBox(
-              height: 200,
-              child: PieChart(
-                PieChartData(
-                  sections: sections,
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 40,
-                  borderData: FlBorderData(show: false),
-                  // Pie Touch Data
-                  pieTouchData: PieTouchData(
-                    touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      // Handle touch events if needed
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(height: 24),
-        Text(
-          _currentUser!.role == 'admin' ? 'Tüm Son Başvurular' : 'Size Atanan Son Başvurular',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 16),
-        StreamBuilder<List<BasvuruModel>>(
-          stream: _basvurularStream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('Gösterilecek başvuru bulunmuyor.'));
-            }
-            final basvurular = snapshot.data!;
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: basvurular.length,
-              itemBuilder: (context, index) {
-                return BasvuruOzetCard(basvuru: basvurular[index]);
-              },
-            );
-          },
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Hatırlatıcılar',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 16),
-        StreamBuilder<List<HatirlatmaModel>>(
-          stream: _hatirlatmaServisi.getDanismanHatirlatmalari(_currentUser!.uid),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Hatırlatıcı bulunmuyor.'),
-                ),
-              );
-            }
-            final hatirlatmalar = snapshot.data!;
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: hatirlatmalar.length > 5 ? 5 : hatirlatmalar.length,
-              itemBuilder: (context, index) {
-                final hatirlatma = hatirlatmalar[index];
-                final tarih = hatirlatma.hatirlatmaTarihi.toDate();
-                final gecmis = DateTime.now().isAfter(tarih);
-                return Card(
-                  color: gecmis ? Colors.red.shade50 : null,
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.alarm,
-                      color: gecmis ? Colors.red : Colors.orange,
-                    ),
-                    title: Text(hatirlatma.mesaj),
-                    subtitle: Text(
-                      '${tarih.day}/${tarih.month}/${tarih.year} ${tarih.hour}:${tarih.minute.toString().padLeft(2, '0')}',
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.check),
-                      onPressed: () async {
-                        await _hatirlatmaServisi.tamamlaHatirlatma(hatirlatma.id);
-                      },
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-        const SizedBox(height: 24),
-        
-        // Hızlı Erişim Kartları
-        Text(
-          'Hızlı Erişim',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 16),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.2,
-          children: [
-            _buildQuickAccessCard(
-              context,
-              'Çöp Kutusu',
-              Icons.delete_outline,
-              Colors.red,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const CopKutusuEkrani()),
-              ),
-            ),
-            _buildQuickAccessCard(
-              context,
-              'Otomasyon',
-              Icons.settings_outlined,
-              Colors.purple,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AutomationManagementScreen()),
-              ),
-            ),
-            _buildQuickAccessCard(
-              context,
-              'Görev Yönetimi',
-              Icons.task_outlined,
-              Colors.blue,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const TaskManagementScreen()),
-              ),
-            ),
-            _buildQuickAccessCard(
-              context,
-              'Gelişmiş Raporlama',
-              Icons.assessment_outlined,
-              Colors.green,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const AdvancedReportingScreenV2()),
-              ),
-            ),
-            _buildQuickAccessCard(
-              context,
-              'Mesajlar',
-              Icons.message_outlined,
-              Colors.orange,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const MesajlarEkrani()),
-              ),
-            ),
-            _buildQuickAccessCard(
-              context,
-              'Global Arama',
-              Icons.search,
-              Colors.teal,
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const GlobalSearchScreen()),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-      ],
+      ),
     );
+  }
+
+  // KPI değerlerini güncelle (son 30 gün için basit hesap)
+  Future<void> _refreshKpis() async {
+    try {
+      final now = DateTime.now();
+      final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+      // Tüm başvurular
+      final all = await _basvuruServisi.getTumBasvurularStream().first;
+      final last30 = all.where((b) {
+        try {
+          final created = (b.olusturulmaTarihi)?.toDate();
+          if (created == null) return false;
+          return created.isAfter(thirtyDaysAgo);
+        } catch (_) {
+          return false;
+        }
+      }).toList();
+
+      final total = last30.length;
+      final completed = last30.where((b) => b.durum == BasvuruDurumu.tamamlandi).length;
+
+      // Dönüşüm Oranı
+      final conv = total == 0 ? 0 : (completed / total) * 100;
+      // Ortalama İşlem Süresi (gün) — basit: tamamlananlarda (tamamlanmaTarihi - olusturulmaTarihi)
+      double avgDays = 0;
+      final durations = <int>[];
+      for (final b in last30.where((b) => b.durum == BasvuruDurumu.tamamlandi)) {
+        final created = (b.olusturulmaTarihi)?.toDate();
+        // Not: BasvuruModel'de tamamlanma alanı 'tamamlanmaTarihi' olmayabilir.
+        // Var olan alan adıyla uyumsuzluk derlemeyi kırdığı için null kabul ederek atlıyoruz.
+        final DateTime? completedAt = null;
+        if (created != null && completedAt != null) {
+          durations.add(completedAt.difference(created).inDays);
+        }
+      }
+      if (durations.isNotEmpty) {
+        avgDays = durations.reduce((a, b) => a + b) / durations.length;
+      }
+
+      // Aylık büyüme: son 30 gün vs önceki 30 gün (basit kıyas)
+      final prev30Start = thirtyDaysAgo.subtract(const Duration(days: 30));
+      final prev30 = all.where((b) {
+        try {
+          final created = (b.olusturulmaTarihi)?.toDate();
+          if (created == null) return false;
+          return created.isAfter(prev30Start) && created.isBefore(thirtyDaysAgo);
+        } catch (_) {
+          return false;
+        }
+      }).length;
+      double growth = 0;
+      if (prev30 > 0) {
+        growth = ((total - prev30) / prev30) * 100;
+      } else if (prev30 == 0 && total > 0) {
+        growth = 100;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _kpiConversion = '${conv.toStringAsFixed(0)}%';
+        _kpiAvgDays = '${avgDays.toStringAsFixed(0)}';
+        _kpiMonthlyGrowth = '${growth >= 0 ? '+' : ''}${growth.toStringAsFixed(0)}%';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _kpiConversion = '—';
+        _kpiAvgDays = '—';
+        _kpiMonthlyGrowth = '+0%';
+      });
+    }
   }
 
   Widget _buildQuickAccessCard(
@@ -1303,4 +1391,4 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
   }
 
 
-} 
+}

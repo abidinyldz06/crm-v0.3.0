@@ -19,56 +19,151 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color bgTop = const Color(0xFF0D47A1); // Lacivert
+    final Color bgBottom = const Color(0xFF1565C0); // Mavi
+    final Color cardColor = theme.colorScheme.surface;
+    final Color onCard = theme.colorScheme.onSurface;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Giriş Yap')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: Form(
-              key: _formKey,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [bgTop, bgBottom],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  TextFormField(
-                    validator: (val) => val!.isEmpty ? 'E-posta adresini girin' : null,
-                    onChanged: (val) => setState(() => email = val),
-                    decoration: const InputDecoration(labelText: 'E-posta'),
-                  ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
-                    obscureText: true,
-                    validator: (val) => val!.length < 6 ? 'Şifre 6+ karakter olmalı' : null,
-                    onChanged: (val) => setState(() => password = val),
-                    decoration: const InputDecoration(labelText: 'Şifre'),
-                  ),
-                  const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    child: loading ? const CircularProgressIndicator(color: Colors.white) : const Text('Giriş'),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() => loading = true);
-                        dynamic result = await _auth.signIn(email, password);
-                        if (result == null) {
-                          setState(() {
-                            error = 'E-posta veya şifre hatalı';
-                            loading = false;
-                          });
-                        } else {
-                           if(mounted) {
-                            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DashboardV2()));
-                           }
-                        }
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 12.0),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Logo / Başlık
                   Text(
-                    error,
-                    style: const TextStyle(color: Colors.red, fontSize: 14.0),
-                    textAlign: TextAlign.center,
+                    'Nobel Vize CRM',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Hesabınızla giriş yapın',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // Card
+                  Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    color: cardColor.withOpacity(0.98),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              'Giriş Yap',
+                              textAlign: TextAlign.left,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: onCard,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              validator: (val) => val == null || val.isEmpty ? 'E-posta adresini girin' : null,
+                              onChanged: (val) => setState(() => email = val),
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                labelText: 'E-posta',
+                                hintText: 'ornek@mail.com',
+                                prefixIcon: Icon(Icons.email_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextFormField(
+                              obscureText: true,
+                              validator: (val) => val != null && val.length < 6 ? 'Şifre 6+ karakter olmalı' : null,
+                              onChanged: (val) => setState(() => password = val),
+                              decoration: const InputDecoration(
+                                labelText: 'Şifre',
+                                prefixIcon: Icon(Icons.lock_outline),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () => _showPasswordResetDialog(context),
+                                child: const Text('Şifremi unuttum'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: theme.colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: 48,
+                              child: ElevatedButton.icon(
+                                icon: loading
+                                    ? const SizedBox(
+                                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                    : const Icon(Icons.login),
+                                label: Text(loading ? 'Giriş yapılıyor...' : 'Giriş'),
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() => loading = true);
+                                    final result = await _auth.signIn(email.trim(), password);
+                                    if (result == null) {
+                                      setState(() {
+                                        error = 'E-posta veya şifre hatalı';
+                                        loading = false;
+                                      });
+                                    } else {
+                                      if (mounted) {
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(builder: (context) => const DashboardV2()),
+                                        );
+                                      }
+                                    }
+                                  }
+                                },
+                              ),
+                            ),
+                            if (error.isNotEmpty) ...[
+                              const SizedBox(height: 12),
+                              Text(
+                                error,
+                                style: const TextStyle(color: Colors.red, fontSize: 14.0),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Alt Bilgi
+                  Text(
+                    'Nobel Vize CRM',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ],
               ),
@@ -128,4 +223,4 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-} 
+}

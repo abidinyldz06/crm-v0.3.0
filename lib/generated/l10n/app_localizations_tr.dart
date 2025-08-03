@@ -283,4 +283,131 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get logoutMessage =>
       'Hesaptan çıkış yapmak istediğinizden emin misiniz?';
+
+  @override
+  String get customersTitle => 'Müşteriler';
+
+  @override
+  String get searchCustomersHint => 'Müşteri ara (ad, soyad, e-posta, şirket)';
+
+  @override
+  String get searchCorporateHint => 'Kurumsal arama (şirket adı, e-posta)';
+
+  @override
+  String get filterAll => 'Tümü';
+
+  @override
+  String get filterIndividual => 'Bireysel';
+
+  @override
+  String get filterCorporate => 'Kurumsal';
+
+  @override
+  String get noCustomers =>
+      'Henüz müşteri bulunmuyor.\nİlk müşterinizi eklemek için + butonuna tıklayın.';
+
+  @override
+  String get addCustomer => 'Müşteri Ekle';
+
+  @override
+  String get open => 'Aç';
+
+  @override
+  String get actions => 'İşlemler';
+
+  @override
+  String get customerNotFound => 'Müşteri bulunamadı';
+
+  @override
+  String get emailNotAvailable => 'E-posta yok';
+
+  @override
+  String get companyInfo => 'Şirket Bilgileri';
+
+  @override
+  String get taxNumber => 'Vergi No';
+
+  @override
+  String get address => 'Adres';
+
+  @override
+  String get notes => 'Notlar';
+
+  @override
+  String get retry => 'Tekrar Dene';
+
+  @override
+  String get myApplicationsTitle => 'Başvurularım';
+
+  @override
+  String get allApplicationsTitle => 'Tüm Başvurular';
+
+  @override
+  String get searchApplicationsHint => 'Başvuru ara (ID, müşteri ID)';
+
+  @override
+  String get statusAll => 'Tümü';
+
+  @override
+  String get statusNew => 'Yeni';
+
+  @override
+  String get statusInProgress => 'İşlemde';
+
+  @override
+  String get statusCompleted => 'Tamamlandı';
+
+  @override
+  String get statusCancelled => 'İptal';
+
+  @override
+  String get noApplicationsAdmin => 'Henüz başvuru bulunmuyor.';
+
+  @override
+  String get noApplicationsConsultant => 'Size atanmış başvuru bulunmuyor.';
+
+  @override
+  String get applicationId => 'ID';
+
+  @override
+  String get customer => 'Müşteri';
+
+  @override
+  String get status => 'Durum';
+
+  @override
+  String get consultant => 'Danışman';
+
+  @override
+  String get mobileHome => 'Ana Sayfa';
+
+  @override
+  String get mobileCustomers => 'Müşteriler';
+
+  @override
+  String get mobileApplications => 'Başvurular';
+
+  @override
+  String get mobileCalendar => 'Takvim';
+
+  @override
+  String get mobileTrash => 'Çöp Kutusu';
+
+  @override
+  String get mobileReports => 'Raporlar';
+
+  @override
+  String get mobileAutomation => 'Otomasyon';
+
+  @override
+  String get mobileTasks => 'Görev Yönetimi';
+
+  @override
+  String get mobileAdvancedReporting => 'Gelişmiş Raporlama';
+
+  @override
+  String get mobileFinance => 'Finans';
+
+  @override
+  String get mobileMessages => 'Mesajlar';
 }

@@ -1,11 +1,12 @@
 import 'package:crm/models/kullanici_model.dart';
-import 'package:crm/models/kullanici_model.dart';
 import 'package:crm/services/auth_service.dart';
 import 'package:crm/services/kullanici_servisi.dart';
 import 'package:crm/services/theme_service.dart';
+import 'package:flutter/material.dart' as m;
 import 'package:crm/services/localization_service.dart';
 import 'package:crm/services/fcm_service.dart';
 import 'package:crm/screens/profil_ekrani.dart';
+import 'package:crm/screens/settings_dashboard_customize.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -122,10 +123,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildNotificationSection(),
           const SizedBox(height: 24),
           
+          // Dashboard Özelleştir
+          _buildDashboardCustomizeEntry(),
+          const SizedBox(height: 24),
+
           // Sistem Bilgileri
           _buildSystemSection(),
           const SizedBox(height: 24),
-          
+
           // Çıkış
           _buildLogoutSection(),
         ],
@@ -238,27 +243,108 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
-            _buildModernListTile(
-              icon: Icons.color_lens,
-              title: 'Tema Rengi',
-              subtitle: 'Mavi (Varsayılan)',
-              trailing: Container(
-                width: 24,
-                height: 24,
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Tema rengi seçimi yakında eklenecek!')),
-                );
-              },
-              iconColor: Colors.purple,
-            ),
+            _buildThemeColorPicker(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildThemeColorPicker() {
+    final themeService = context.read<ThemeService>();
+    final List<Color> palette = [
+      const Color(0xFF1565C0), // Blue
+      const Color(0xFF0EA5E9), // Sky
+      const Color(0xFF059669), // Emerald
+      const Color(0xFFF59E0B), // Amber
+      const Color(0xFFDC2626), // Red
+      const Color(0xFF7C3AED), // Violet
+      const Color(0xFF14B8A6), // Teal
+      const Color(0xFF3B82F6), // Indigo-ish
+    ];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.purple.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(Icons.color_lens, color: Colors.purple, size: 20),
+        ),
+        title: const Text('Tema Rengi', style: TextStyle(fontWeight: FontWeight.w500)),
+        subtitle: const Text('Uygulama vurgu rengini seçin'),
+        trailing: Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: themeService.seedColor,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+        ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                title: const Text('Tema Rengi'),
+                content: SizedBox(
+                  width: 320,
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      for (final c in palette)
+                        GestureDetector(
+                          onTap: () async {
+                            await themeService.setSeedColor(c);
+                            if (!mounted) return;
+                            Navigator.of(ctx).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Tema rengi güncellendi'), backgroundColor: c),
+                            );
+                          },
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: c,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                )
+                              ],
+                              border: Border.all(
+                                color: c.value == themeService.seedColor.value ? Colors.black : Colors.white,
+                                width: c.value == themeService.seedColor.value ? 2 : 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('Kapat'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }
@@ -329,6 +415,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardCustomizeEntry() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _buildModernListTile(
+          icon: Icons.dashboard_customize,
+          title: 'Dashboard Özelleştir',
+          subtitle: 'Gösterilecek bölümleri seçin ve sıralayın',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SettingsDashboardCustomize()),
+            );
+          },
+          iconColor: Colors.indigo,
         ),
       ),
     );
@@ -658,17 +763,97 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showChangePasswordDialog() {
+    final currentController = TextEditingController();
+    final newController = TextEditingController();
+    final confirmController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool isSubmitting = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Şifre Değiştir'),
-        content: const Text('Şifre değiştirme özelliği yakında eklenecek!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Tamam'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setS) => AlertDialog(
+          title: const Text('Şifre Değiştir'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: currentController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Mevcut Şifre'),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Mevcut şifre gerekli';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: newController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Yeni Şifre'),
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Yeni şifre gerekli';
+                    if (v.length < 6) return 'En az 6 karakter';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: confirmController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Yeni Şifre (Tekrar)'),
+                  validator: (v) {
+                    if (v != newController.text) return 'Şifreler eşleşmiyor';
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: isSubmitting ? null : () => Navigator.of(context).pop(),
+              child: const Text('İptal'),
+            ),
+            ElevatedButton(
+              onPressed: isSubmitting
+                  ? null
+                  : () async {
+                      if (!formKey.currentState!.validate()) return;
+                      setS(() => isSubmitting = true);
+                      try {
+                        // Firebase Auth re-auth + password update flow (email/password varsayımı)
+                        final user = FirebaseAuth.instance.currentUser;
+                        if (user == null || user.email == null) {
+                          throw Exception('Kullanıcı bulunamadı');
+                        }
+                        final cred = EmailAuthProvider.credential(
+                          email: user.email!,
+                          password: currentController.text,
+                        );
+                        await user.reauthenticateWithCredential(cred);
+                        await user.updatePassword(newController.text);
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Şifre güncellendi'), backgroundColor: Colors.green),
+                          );
+                        }
+                      } catch (e) {
+                        setS(() => isSubmitting = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Hata: $e'), backgroundColor: Colors.red),
+                        );
+                      }
+                    },
+              child: isSubmitting
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Kaydet'),
+            ),
+          ],
+        ),
       ),
     );
   }

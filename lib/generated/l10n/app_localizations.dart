@@ -637,6 +637,258 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Hesaptan çıkış yapmak istediğinizden emin misiniz?'**
   String get logoutMessage;
+
+  /// No description provided for @customersTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteriler'**
+  String get customersTitle;
+
+  /// No description provided for @searchCustomersHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteri ara (ad, soyad, e-posta, şirket)'**
+  String get searchCustomersHint;
+
+  /// No description provided for @searchCorporateHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kurumsal arama (şirket adı, e-posta)'**
+  String get searchCorporateHint;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get filterAll;
+
+  /// No description provided for @filterIndividual.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bireysel'**
+  String get filterIndividual;
+
+  /// No description provided for @filterCorporate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kurumsal'**
+  String get filterCorporate;
+
+  /// No description provided for @noCustomers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz müşteri bulunmuyor.\nİlk müşterinizi eklemek için + butonuna tıklayın.'**
+  String get noCustomers;
+
+  /// No description provided for @addCustomer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteri Ekle'**
+  String get addCustomer;
+
+  /// No description provided for @open.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aç'**
+  String get open;
+
+  /// No description provided for @actions.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşlemler'**
+  String get actions;
+
+  /// No description provided for @customerNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteri bulunamadı'**
+  String get customerNotFound;
+
+  /// No description provided for @emailNotAvailable.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta yok'**
+  String get emailNotAvailable;
+
+  /// No description provided for @companyInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şirket Bilgileri'**
+  String get companyInfo;
+
+  /// No description provided for @taxNumber.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vergi No'**
+  String get taxNumber;
+
+  /// No description provided for @address.
+  ///
+  /// In tr, this message translates to:
+  /// **'Adres'**
+  String get address;
+
+  /// No description provided for @notes.
+  ///
+  /// In tr, this message translates to:
+  /// **'Notlar'**
+  String get notes;
+
+  /// No description provided for @retry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tekrar Dene'**
+  String get retry;
+
+  /// No description provided for @myApplicationsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başvurularım'**
+  String get myApplicationsTitle;
+
+  /// No description provided for @allApplicationsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm Başvurular'**
+  String get allApplicationsTitle;
+
+  /// No description provided for @searchApplicationsHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başvuru ara (ID, müşteri ID)'**
+  String get searchApplicationsHint;
+
+  /// No description provided for @statusAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get statusAll;
+
+  /// No description provided for @statusNew.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni'**
+  String get statusNew;
+
+  /// No description provided for @statusInProgress.
+  ///
+  /// In tr, this message translates to:
+  /// **'İşlemde'**
+  String get statusInProgress;
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tamamlandı'**
+  String get statusCompleted;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In tr, this message translates to:
+  /// **'İptal'**
+  String get statusCancelled;
+
+  /// No description provided for @noApplicationsAdmin.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz başvuru bulunmuyor.'**
+  String get noApplicationsAdmin;
+
+  /// No description provided for @noApplicationsConsultant.
+  ///
+  /// In tr, this message translates to:
+  /// **'Size atanmış başvuru bulunmuyor.'**
+  String get noApplicationsConsultant;
+
+  /// No description provided for @applicationId.
+  ///
+  /// In tr, this message translates to:
+  /// **'ID'**
+  String get applicationId;
+
+  /// No description provided for @customer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteri'**
+  String get customer;
+
+  /// No description provided for @status.
+  ///
+  /// In tr, this message translates to:
+  /// **'Durum'**
+  String get status;
+
+  /// No description provided for @consultant.
+  ///
+  /// In tr, this message translates to:
+  /// **'Danışman'**
+  String get consultant;
+
+  /// No description provided for @mobileHome.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ana Sayfa'**
+  String get mobileHome;
+
+  /// No description provided for @mobileCustomers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Müşteriler'**
+  String get mobileCustomers;
+
+  /// No description provided for @mobileApplications.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başvurular'**
+  String get mobileApplications;
+
+  /// No description provided for @mobileCalendar.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takvim'**
+  String get mobileCalendar;
+
+  /// No description provided for @mobileTrash.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çöp Kutusu'**
+  String get mobileTrash;
+
+  /// No description provided for @mobileReports.
+  ///
+  /// In tr, this message translates to:
+  /// **'Raporlar'**
+  String get mobileReports;
+
+  /// No description provided for @mobileAutomation.
+  ///
+  /// In tr, this message translates to:
+  /// **'Otomasyon'**
+  String get mobileAutomation;
+
+  /// No description provided for @mobileTasks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görev Yönetimi'**
+  String get mobileTasks;
+
+  /// No description provided for @mobileAdvancedReporting.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gelişmiş Raporlama'**
+  String get mobileAdvancedReporting;
+
+  /// No description provided for @mobileFinance.
+  ///
+  /// In tr, this message translates to:
+  /// **'Finans'**
+  String get mobileFinance;
+
+  /// No description provided for @mobileMessages.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesajlar'**
+  String get mobileMessages;
 }
 
 class _AppLocalizationsDelegate

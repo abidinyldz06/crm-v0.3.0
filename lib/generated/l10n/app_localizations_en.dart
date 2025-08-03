@@ -282,4 +282,132 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get customersTitle => 'Customers';
+
+  @override
+  String get searchCustomersHint =>
+      'Search customers (first name, last name, email, company)';
+
+  @override
+  String get searchCorporateHint => 'Corporate search (company name, email)';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterIndividual => 'Individual';
+
+  @override
+  String get filterCorporate => 'Corporate';
+
+  @override
+  String get noCustomers =>
+      'No customers yet.\nClick + to add your first customer.';
+
+  @override
+  String get addCustomer => 'Add Customer';
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get customerNotFound => 'Customer not found';
+
+  @override
+  String get emailNotAvailable => 'No email';
+
+  @override
+  String get companyInfo => 'Company Information';
+
+  @override
+  String get taxNumber => 'Tax Number';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get myApplicationsTitle => 'My Applications';
+
+  @override
+  String get allApplicationsTitle => 'All Applications';
+
+  @override
+  String get searchApplicationsHint => 'Search applications (ID, customer ID)';
+
+  @override
+  String get statusAll => 'All';
+
+  @override
+  String get statusNew => 'New';
+
+  @override
+  String get statusInProgress => 'In Progress';
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get statusCancelled => 'Cancelled';
+
+  @override
+  String get noApplicationsAdmin => 'No applications yet.';
+
+  @override
+  String get noApplicationsConsultant => 'No applications assigned to you.';
+
+  @override
+  String get applicationId => 'ID';
+
+  @override
+  String get customer => 'Customer';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get consultant => 'Consultant';
+
+  @override
+  String get mobileHome => 'Home';
+
+  @override
+  String get mobileCustomers => 'Customers';
+
+  @override
+  String get mobileApplications => 'Applications';
+
+  @override
+  String get mobileCalendar => 'Calendar';
+
+  @override
+  String get mobileTrash => 'Trash';
+
+  @override
+  String get mobileReports => 'Reports';
+
+  @override
+  String get mobileAutomation => 'Automation';
+
+  @override
+  String get mobileTasks => 'Task Management';
+
+  @override
+  String get mobileAdvancedReporting => 'Advanced Reporting';
+
+  @override
+  String get mobileFinance => 'Finance';
+
+  @override
+  String get mobileMessages => 'Messages';
 }

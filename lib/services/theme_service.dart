@@ -7,16 +7,22 @@ class ThemeService extends ChangeNotifier {
   ThemeService._internal();
 
   static const String _themeKey = 'theme_mode';
+  static const String _seedKey = 'theme_seed';
   
   ThemeMode _themeMode = ThemeMode.light;
   ThemeMode get themeMode => _themeMode;
+
+  // Seed color (for Material 3 ColorScheme.fromSeed)
+  Color _seedColor = const Color(0xFF1565C0); // default blue
+  Color get seedColor => _seedColor;
 
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final savedTheme = prefs.getString(_themeKey);
-    
+    final savedSeed = prefs.getInt(_seedKey);
+
     switch (savedTheme) {
       case 'dark':
         _themeMode = ThemeMode.dark;
@@ -30,6 +36,11 @@ class ThemeService extends ChangeNotifier {
       default:
         _themeMode = ThemeMode.light;
     }
+
+    if (savedSeed != null) {
+      _seedColor = Color(savedSeed);
+    }
+
     notifyListeners();
   }
 
@@ -51,6 +62,13 @@ class ThemeService extends ChangeNotifier {
         break;
     }
     await prefs.setString(_themeKey, themeString);
+  }
+
+  Future<void> setSeedColor(Color color) async {
+    _seedColor = color;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_seedKey, color.value);
   }
 
   Future<void> toggleTheme() async {

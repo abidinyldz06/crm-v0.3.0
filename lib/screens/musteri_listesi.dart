@@ -1,12 +1,13 @@
 import 'package:crm/models/kurumsal_musteri_model.dart';
 import 'package:crm/models/musteri_model.dart';
-// import 'package:crm/screens/kurumsal_musteri_detay_ekrani.dart'; // Geçici olarak devre dışı
+import 'package:crm/routes/route_names.dart';
 import 'package:crm/screens/musteri_detay.dart';
 import 'package:crm/services/kurumsal_musteri_servisi.dart';
 import 'package:crm/services/musteri_servisi.dart';
 import 'package:crm/widgets/loading_states.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:crm/generated/l10n/app_localizations.dart';
 
 class MusteriListesi extends StatefulWidget {
   const MusteriListesi({super.key});
@@ -23,6 +24,8 @@ class _MusteriListesiState extends State<MusteriListesi> {
   final KurumsalMusteriServisi _kurumsalServisi = KurumsalMusteriServisi();
   
   final int _itemsPerPage = 20;
+  final TextEditingController _kurumsalSearchController = TextEditingController();
+  String _kurumsalSearchQuery = '';
   int _currentPage = 0;
   List<dynamic> _allItems = [];
   List<dynamic> _displayedItems = [];
@@ -56,6 +59,11 @@ class _MusteriListesiState extends State<MusteriListesi> {
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   void _loadMore() {
     if (!_isLoading && _hasMore) {
       setState(() {
@@ -67,16 +75,24 @@ class _MusteriListesiState extends State<MusteriListesi> {
 
   void _filterAndPaginate() {
     final filtered = _allItems.where((m) {
-      bool matchesFilter = _filterType == 'Tümü' ||
-        (_filterType == 'Bireysel' && m is MusteriModel) ||
-        (_filterType == 'Kurumsal' && m is KurumsalMusteriModel);
+      final isBireysel = m is MusteriModel;
+      final isKurumsal = m is KurumsalMusteriModel;
+
+      final matchesFilter = _filterType == 'Tümü' ||
+          (_filterType == 'Bireysel' && isBireysel) ||
+          (_filterType == 'Kurumsal' && isKurumsal);
 
       bool matchesSearch = false;
-      if (m is MusteriModel) {
-        matchesSearch = m.ad.toLowerCase().contains(_searchQuery) ||
-          m.soyad.toLowerCase().contains(_searchQuery);
-      } else if (m is KurumsalMusteriModel) {
-        matchesSearch = m.sirketAdi.toLowerCase().contains(_searchQuery);
+      if (isBireysel) {
+        final mm = m as MusteriModel;
+        matchesSearch = mm.ad.toLowerCase().contains(_searchQuery) ||
+            mm.soyad.toLowerCase().contains(_searchQuery) ||
+            mm.email.toLowerCase().contains(_searchQuery);
+      } else if (isKurumsal) {
+        final km = m as KurumsalMusteriModel;
+        final query = (_kurumsalSearchQuery.isNotEmpty ? _kurumsalSearchQuery : _searchQuery);
+        matchesSearch = km.sirketAdi.toLowerCase().contains(query) ||
+            (km.email ?? '').toLowerCase().contains(query);
       }
 
       return matchesFilter && matchesSearch;
@@ -112,29 +128,61 @@ class _MusteriListesiState extends State<MusteriListesi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Müşteriler'),
+        title: Text(AppLocalizations.of(context)!.customersTitle),
         actions: [
-          DropdownButton<String>(
-            value: _filterType,
-            items: ['Tümü', 'Bireysel', 'Kurumsal'].map((type) => DropdownMenuItem(value: type, child: Text(type))).toList(),
-            onChanged: (value) => setState(() => _filterType = value ?? 'Tümü'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: SegmentedButton<String>(
+              segments: <ButtonSegment<String>>[
+                ButtonSegment<String>(value: 'Tümü', label: Text(AppLocalizations.of(context)!.filterAll), icon: const Icon(Icons.all_inclusive)),
+                ButtonSegment<String>(value: 'Bireysel', label: Text(AppLocalizations.of(context)!.filterIndividual), icon: const Icon(Icons.person_outline)),
+                ButtonSegment<String>(value: 'Kurumsal', label: Text(AppLocalizations.of(context)!.filterCorporate), icon: const Icon(Icons.business_outlined)),
+              ],
+              selected: <String>{_filterType},
+              onSelectionChanged: (newSelection) {
+                setState(() {
+                  _filterType = newSelection.first;
+                  _currentPage = 0;
+                  _displayedItems.clear();
+                  _filterAndPaginate();
+                });
+              },
+            ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Müşteri Ara',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                hintText: AppLocalizations.of(context)!.searchCustomersHint,
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
+          if (_filterType == 'Kurumsal')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: TextField(
+                controller: _kurumsalSearchController,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.searchCorporateHint,
+                  prefixIcon: const Icon(Icons.business),
+                ),
+                onChanged: (v) {
+                  setState(() {
+                    _kurumsalSearchQuery = v.toLowerCase();
+                    _currentPage = 0;
+                    _displayedItems.clear();
+                    _filterAndPaginate();
+                  });
+                },
+              ),
+            ),
           Expanded(
             child: StreamBuilder<List<dynamic>>(
               stream: getCombinedMusteriler(),
@@ -159,9 +207,9 @@ class _MusteriListesiState extends State<MusteriListesi> {
                 // Empty state
                 if (snapshot.data!.isEmpty) {
                   return LoadingStates.emptyState(
-                    message: 'Henüz müşteri bulunmuyor.\nİlk müşterinizi eklemek için + butonuna tıklayın.',
+                    message: AppLocalizations.of(context)!.noCustomers,
                     icon: Icons.people_outline,
-                    actionText: 'Müşteri Ekle',
+                    actionText: AppLocalizations.of(context)!.addCustomer,
                     onAction: () {
                       // Müşteri ekleme sayfasına yönlendir
                       Navigator.pushNamed(context, '/musteri_ekle');
@@ -185,37 +233,33 @@ class _MusteriListesiState extends State<MusteriListesi> {
                   itemCount: _displayedItems.length + (_hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == _displayedItems.length) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
+                      return const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Center(child: CircularProgressIndicator()),
                       );
                     }
-                    
+
                     final m = _displayedItems[index];
                     if (m is MusteriModel) {
-                      return ListTile(
-                        title: Text(m.adSoyad),
-                        subtitle: Text(m.email),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () => _musteriServisi.softDeleteMusteri(m.id),
-                        ),
-                        onTap: () => Navigator.pushNamed(context, '/musteri_detay', arguments: m.id),
+                      return _musteriCard(
+                        context: context,
+                        title: m.adSoyad,
+                        subtitle: m.email,
+                        leading: CircleAvatar(child: Text(m.ad.isNotEmpty ? m.ad[0].toUpperCase() : '?')),
+                        onOpen: () => Navigator.pushNamed(context, RouteNames.musteriDetay, arguments: m.id),
+                        onDelete: () => _musteriServisi.softDeleteMusteri(m.id),
                       );
                     } else if (m is KurumsalMusteriModel) {
-                      return ListTile(
-                        title: Text(m.sirketAdi),
-                        subtitle: Text(m.email ?? ''),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () => _kurumsalServisi.softDeleteKurumsalMusteri(m.id),
-                        ),
-                        onTap: () => Navigator.pushNamed(context, '/kurumsal_musteri_detay', arguments: m.id),
+                      return _musteriCard(
+                        context: context,
+                        title: m.sirketAdi,
+                        subtitle: m.email ?? '',
+                        leading: const CircleAvatar(child: Icon(Icons.business)),
+                        onOpen: () => Navigator.pushNamed(context, RouteNames.kurumsalMusteriDetay, arguments: m.id),
+                        onDelete: () => _kurumsalServisi.softDeleteKurumsalMusteri(m.id),
                       );
                     }
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   },
                 );
               },
@@ -224,8 +268,9 @@ class _MusteriListesiState extends State<MusteriListesi> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => Navigator.pushNamed(context, '/musteri_ekle').then((_) => _loadData(showLoading: false)),
+        child: const Icon(Icons.add),
+        onPressed: () => Navigator.pushNamed(context, RouteNames.musteriEkle).then((_) => _loadData(showLoading: false)),
+        tooltip: AppLocalizations.of(context)!.addCustomer,
       ),
     );
   }
@@ -321,6 +366,54 @@ class __BireyselMusteriListesiState extends State<_BireyselMusteriListesi> {
   }
 }
 
+  Widget _musteriCard({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required Widget leading,
+    required VoidCallback onOpen,
+    required VoidCallback onDelete,
+  }) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: ListTile(
+        leading: leading,
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: PopupMenuButton<String>(
+          tooltip: 'İşlemler',
+          onSelected: (v) {
+            switch (v) {
+              case 'open':
+                onOpen();
+                break;
+              case 'delete':
+                onDelete();
+                break;
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'open',
+              child: ListTile(
+                leading: const Icon(Icons.open_in_new),
+                title: Text(AppLocalizations.of(context)!.open),
+              ),
+            ),
+            PopupMenuItem(
+              value: 'delete',
+              child: ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(AppLocalizations.of(context)!.delete),
+              ),
+            ),
+          ],
+        ),
+        onTap: onOpen,
+      ),
+    );
+  }
+
 // Kurumsal Müşteriler İçin Alt Widget
 class _KurumsalMusteriListesi extends StatelessWidget {
   const _KurumsalMusteriListesi();
@@ -361,4 +454,4 @@ class _KurumsalMusteriListesi extends StatelessWidget {
       },
     );
   }
-} 
+}
