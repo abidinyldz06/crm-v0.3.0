@@ -406,8 +406,5 @@ class AppLocalizationsTr extends AppLocalizations {
   String get mobileAdvancedReporting => 'Gelişmiş Raporlama';
 
   @override
-  String get mobileFinance => 'Finans';
-
-  @override
   String get mobileMessages => 'Mesajlar';
 }

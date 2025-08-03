@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool loading = false;
 
   // Yeni sürüm etiketi
-  static const String appVersionLabel = 'v0.3';
+  static const String appVersionLabel = 'v0.3.0 Real-time Edition';
 
   @override
   Widget build(BuildContext context) {

@@ -1,165 +1,170 @@
-# 🚀 Vize CRM v0.2.5 Real-time Edition
+# CRM Flutter Uygulaması
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR_SITE_ID/deploy-status.svg)](https://app.netlify.com/sites/YOUR_SITE_NAME/deploys)
+Bu depo; Flutter ile geliştirilen, Firebase servisleri (Auth, Firestore, Storage, Messaging) ve web/PWA desteği olan bir CRM uygulamasının kaynak kodlarını içerir.
 
-**Modern, Real-time Müşteri İlişkileri Yönetim Sistemi**
+Sürüm: 0.3.1+2
 
-🌐 **Live Demo**: Netlify'de deploy ediliyor...
-
-## ✨ Özellikler
-
-### 🔔 Real-time Bildirimler
-- Firebase Cloud Messaging entegrasyonu
-- 7 farklı bildirim türü (Application, Appointment, Approval, System, Message, Customer, Test)
-- Real-time badge updates
-- Background/foreground mesaj işleme
-
-### 🎨 Modern UI/UX
-- **Responsive Design**: Mobil, tablet, desktop uyumlu
-- **Dark/Light Theme**: Kullanıcı tercihi
-- **Multi-language**: Türkçe/İngilizce desteği
-- **PWA Support**: Ana ekrana eklenebilir
-
-### 🔧 Teknik Özellikler
-- **Flutter Web**: Cross-platform web uygulaması
-- **Firebase**: Authentication, Firestore, Cloud Messaging
-- **Provider Pattern**: State management
-- **Responsive Layout**: Tüm cihazlarda mükemmel görünüm
-
-## 🏃‍♂️ Hızlı Başlangıç
-
-### Development
-```bash
-# Repository'yi clone et
-git clone https://github.com/KULLANICI_ADI/crm-web.git
-cd crm-web
-
-# Dependencies yükle
-flutter pub get
-
-# Development server başlat
-flutter run -d chrome --web-port 8080
-```
-
-### Production Build
-```bash
-# Web için build et
-flutter build web --release
-
-# GitHub Pages için build et
-flutter build web --release --base-href "/crm-web/"
-```
-
-## 🌐 Deployment
-
-### Netlify (Otomatik) - Önerilen
-1. Repository'yi GitHub'a push et
-2. Netlify'de "New site from Git" seç
-3. Repository'yi bağla
-4. Build settings otomatik algılanır (netlify.toml sayesinde)
-5. Deploy et!
-
-**Build Command**: `flutter build web --release --base-href / --no-tree-shake-icons`  
-**Publish Directory**: `build/web`
-
-### Manuel Deployment
-```bash
-# Local build için
-flutter build web --release --base-href / --no-tree-shake-icons
-# build/web klasörünü Netlify'e upload et
-```
-
-## 📱 Ekran Görüntüleri
-
-### Dashboard
-- Real-time bildirimler
-- KPI kartları
-- Müşteri özeti
-- Başvuru durumları
-
-### Responsive Design
-- **Desktop**: Geniş layout, sidebar navigation
-- **Tablet**: Hybrid yaklaşım
-- **Mobile**: Full-screen, drawer navigation
-
-## 🔧 Konfigürasyon
-
-### Firebase Setup
-1. Firebase Console'da proje oluştur
-2. Web app ekle
-3. `firebase_options.dart` dosyasını güncelle
-4. Authorized domains listesine domain ekle
-
-### Environment Variables
-```bash
-# .env dosyası (opsiyonel)
-FIREBASE_API_KEY=your_api_key
-FIREBASE_PROJECT_ID=your_project_id
-```
-
-## 📊 Performance
-
-### Metrics
-- **First Load**: ~2-3 saniye
-- **Bundle Size**: ~2-3 MB
-- **Lighthouse Score**: 90+
-
-### Optimizasyonlar
-- Tree-shaking
-- Font optimization
-- Asset compression
-- Code splitting
-
-## 🐛 Troubleshooting
-
-### Yaygın Sorunlar
-1. **Firebase CORS**: Authorized domains kontrol et
-2. **Build Hatası**: `flutter clean && flutter pub get`
-3. **404 Hatası**: `.nojekyll` dosyası var mı kontrol et
-
-### Debug
-```bash
-# Verbose build
-flutter build web --release --verbose
-
-# Development mode
-flutter run -d chrome --web-port 8080 --verbose
-```
-
-## 🤝 Katkıda Bulunma
-
-1. Repository'yi fork et
-2. Feature branch oluştur (`git checkout -b feature/amazing-feature`)
-3. Commit et (`git commit -m 'Add amazing feature'`)
-4. Branch'e push et (`git push origin feature/amazing-feature`)
-5. Pull Request oluştur
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
-
-## 📞 İletişim
-
-- **Geliştirici**: [GitHub Profile](https://github.com/KULLANICI_ADI)
-- **Demo**: [Live Demo](https://KULLANICI_ADI.github.io/crm-web/)
-- **Issues**: [GitHub Issues](https://github.com/KULLANICI_ADI/crm-web/issues)
-
-## 🎯 Roadmap
-
-### v0.2.6 (Planlanan)
-- [ ] Advanced analytics
-- [ ] Export/Import özellikleri
-- [ ] Bulk operations
-- [ ] Advanced filtering
-
-### v0.3.0 (Gelecek)
-- [ ] Mobile app
-- [ ] API integration
-- [ ] Third-party integrations
-- [ ] Advanced reporting
+## İçindekiler
+- [Ön Koşullar](#ön-koşullar)
+- [Kurulum ve Çalıştırma](#kurulum-ve-çalıştırma)
+- [Proje Yapısı](#proje-yapısı)
+- [PWA Notları](#pwa-notları)
+- [i18n (Yerelleştirme)](#i18n-yerelleştirme)
+- [Sürümleme ve Notlar](#sürümleme-ve-notlar)
+- [Geliştirme İpuçları](#geliştirme-ipuçları)
+- [Lisans](#lisans)
 
 ---
 
-**🎉 CRM v0.2.5 Real-time Edition - Modern müşteri yönetimi artık web'de!**
+## Ön Koşullar
+- Flutter SDK (stable kanal tavsiye edilir)
+- Dart SDK (Flutter ile gelir)
+- Bir Firebase projesi ve aşağıdaki servislerin etkinleştirilmiş olması:
+  - Authentication (Email/Password vb.)
+  - Cloud Firestore
+  - Storage (opsiyonel modüller için)
+  - Firebase Cloud Messaging (opsiyonel PWA bildirimleri için)
+- Web geliştirme için Chrome (Flutter Web debug hedefi)
 
-Made with ❤️ using Flutter & Firebase
+Sürüm kontrolleri:
+```
+flutter --version
+dart --version
+```
+
+---
+
+## Kurulum ve Çalıştırma
+
+1) Bağımlılıkları indir
+```
+flutter pub get
+```
+
+2) Firebase yapılandırması
+- lib/firebase_options.dart dosyasında projenize ait Firebase konfigürasyonu bulunur.
+- Gerekirse FlutterFire CLI ile yeniden oluşturabilirsiniz:
+```
+dart pub global activate flutterfire_cli
+flutterfire configure
+```
+- Web için: web/firebase-messaging-sw.js servis çalışanı dosyası mevcuttur. Firebase Messaging kullanacaksanız, alan adınızın bu SW’ı servis edebildiğinden emin olun.
+
+3) Uygulamayı çalıştırma (Web – Chrome)
+```
+flutter run -d chrome
+```
+
+4) Uygulamayı çalıştırma (Desktop/Diğer)
+- Desktop hedefleri için platform gereksinimlerini sağlayın (Windows/Mac/Linux).
+- Ardından:
+```
+flutter run
+```
+
+Not: Üretim dağıtımı için:
+```
+flutter build web
+```
+çıktısı web/build dizininde oluşur ve Netlify/GitHub Pages/Heroku gibi yerlere dağıtabilirsiniz.
+
+---
+
+## Proje Yapısı
+
+Önemli klasörler:
+- lib/main.dart: Uygulama girişi, tema/yerelleştirme/provider kurulumları ve AuthWrapper.
+- lib/routes/: İsimli rotalar ve RouteGenerator.
+- lib/screens/: Ekranlar (dashboard_v2, login_screen, müşteri, başvuru, ayarlar vb.).
+- lib/services/: Servisler (auth_service, basvuru_servisi, fcm_service, ...).
+- lib/models/: Veri modelleri.
+- lib/widgets/: Paylaşılan widget’lar.
+- lib/generated/l10n/: AppLocalizations kaynakları (ARB’den üretilen dosyalar).
+- web/: PWA için manifest.json, firebase-messaging-sw.js ve statik dosyalar.
+
+---
+
+## PWA Notları
+
+Dosyalar:
+- web/manifest.json: Uygulama adı, kısa ad, ikonlar ve başlangıç URL’si.
+- web/firebase-messaging-sw.js: Firebase Messaging için servis çalışanı (SW).
+
+Dikkat edilmesi gerekenler:
+- Manifest’te ikon yollarının doğru olduğundan emin olun (web/icons/*).
+- Uygulamanın kısa adı (short_name) ve name alanları web başlatıcılarda görünür.
+- PWA offline cache stratejisi:
+  - Flutter web, üretim build’inde kendi asset manifest ve cache mekanizmasını oluşturur.
+  - Ek rota/dosya cache’i isteniyorsa özel SW yazılabilir (ileri seviye).
+- FCM için:
+  - SW dosyası kök dizinde servis edilmelidir (web/firebase-messaging-sw.js).
+  - Prod alan adınızda SW’ın düzgün yüklendiğini (navigator.serviceWorker) doğrulayın.
+
+Dağıtım örnekleri:
+- Netlify: netlify.toml yapılandırması ile /build/web klasörü servis edilebilir.
+- GitHub Pages: build web çıktısını gh-pages dalına publish edebilirsiniz.
+- Firebase Hosting: “firebase init hosting” ve “firebase deploy” komutlarıyla servis edebilirsiniz.
+
+---
+
+## i18n (Yerelleştirme)
+
+Kaynak dosyalar:
+- lib/l10n/app_tr.arb
+- lib/l10n/app_en.arb
+- lib/generated/l10n/ ve lib/generated/l10n/app_localizations.dart (otomatik üretilir)
+
+Kullanım:
+- MaterialApp içinde:
+  - localizationsDelegates ve supportedLocales tanımlıdır.
+- Metin kullanımı:
+```
+final loc = AppLocalizations.of(context)!;
+Text(loc.appTitle);
+```
+
+Yeni anahtar ekleme akışı:
+1) app_tr.arb ve app_en.arb dosyalarına aynı anahtarları uygun çevirilerle ekleyin.
+2) Flutter gen ile veya “flutter pub get” sonrasında üretilen AppLocalizations sınıflarını kullanın.
+3) Derlemede eksik çeviri/anahtar eşleşmelerini takip edin.
+
+Dil ve tema kontrolü:
+- LocalizationService, dil seçimlerini yönetir.
+- ThemeService, light/dark temayı yönetir.
+
+---
+
+## Sürümleme ve Notlar
+
+- Versiyon: pubspec.yaml’daki version alanı (ör. 0.3.1+2).
+- Değişiklik günlükleri:
+  - CHANGELOG.md (genel değişiklik listeleri)
+  - RELEASE_NOTES_vX.Y.Z.md (özgül sürüm notları, varsa)
+- Sürüm artırma adımları (öneri):
+  1) pubspec.yaml versiyonu yükselt
+  2) CHANGELOG.md ve/veya yeni RELEASE_NOTES dosyasını güncelle/ekle
+  3) flutter analyze ve temel smoke testleri çalıştır
+  4) build al ve dağıtım platformuna yükle
+
+---
+
+## Geliştirme İpuçları
+
+- Analiz ve lint:
+```
+flutter analyze
+```
+- Hot restart/hot reload (flutter run içinde R/r).
+- Yaygın uyarılar:
+  - prefer_const_constructors, use_super_parameters: performans ve modern Dart önerileri.
+  - unnecessary_non_null_assertion, invalid_null_aware_operator: null-safety temizlikleri.
+  - avoid_print: üretimde logger kullanın (ör. lib/utils/logger.dart — AppLogger).
+- Firebase hataları:
+  - API anahtarları ve konfigürasyonların doğru olduğuna emin olun.
+  - Yetki kuralları (Firestore Rules) geliştirme/üretim moduna uygun olmalı.
+
+---
+
+## Lisans
+
+Bu proje için lisans bilgisi eklenmemiştir. Gerekli ise uygun bir lisans metni (MIT/Apache-2.0 vs.) bu bölüme eklenmelidir.

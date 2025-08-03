@@ -15,14 +15,14 @@ class AdvancedReportingService {
       final customerMetrics = await _getCustomerMetrics(startDate, endDate);
       final applicationMetrics = await _getApplicationMetrics(startDate, endDate);
       final taskMetrics = await _getTaskMetrics(startDate, endDate);
-      final financialMetrics = await _getFinancialMetrics(startDate, endDate);
+      // Finans metrikleri kaldırıldı
       final conversionRates = await _getConversionRates(startDate, endDate);
 
       return {
         'customers': customerMetrics,
         'applications': applicationMetrics,
         'tasks': taskMetrics,
-        'financial': financialMetrics,
+        // 'financial': financialMetrics, // KALDIRILDI
         'conversionRates': conversionRates,
       };
     } catch (e) {
@@ -104,15 +104,8 @@ class AdvancedReportingService {
     };
   }
 
-  Future<Map<String, dynamic>> _getFinancialMetrics(DateTime start, DateTime end) async {
-    // Mock finansal veriler - gerçek uygulamada veritabanından çekilir
-    return {
-      'totalRevenue': 150000.0,
-      'monthlyGrowth': 12.5,
-      'averageDealSize': 5000.0,
-      'profitMargin': 25.0,
-    };
-  }
+  // Finans metrikleri KALDIRILDI
+  // Future<Map<String, dynamic>> _getFinancialMetrics(DateTime start, DateTime end) async { ... }
 
   Future<Map<String, dynamic>> _getConversionRates(DateTime start, DateTime end) async {
     final customerSnapshot = await _firestore
@@ -153,8 +146,8 @@ class AdvancedReportingService {
           return await _getCustomerTrends(groupBy, startDate, endDate);
         case 'applications':
           return await _getApplicationTrends(groupBy, startDate, endDate);
-        case 'revenue':
-          return await _getRevenueTrends(groupBy, startDate, endDate);
+        // case 'revenue':
+        //   return await _getRevenueTrends(groupBy, startDate, endDate); // KALDIRILDI
         case 'tasks':
           return await _getTaskTrends(groupBy, startDate, endDate);
         default:
@@ -198,20 +191,8 @@ class AdvancedReportingService {
     };
   }
 
-  Future<Map<String, dynamic>> _getRevenueTrends(String groupBy, DateTime start, DateTime end) async {
-    // Mock gelir verileri
-    final mockData = {
-      '2024-01': 15000.0,
-      '2024-02': 18000.0,
-      '2024-03': 22000.0,
-      '2024-04': 25000.0,
-    };
-
-    return {
-      'data': mockData,
-      'growthRate': 15.5,
-    };
-  }
+  // Gelir trendleri KALDIRILDI
+  // Future<Map<String, dynamic>> _getRevenueTrends(String groupBy, DateTime start, DateTime end) async { ... }
 
   Future<Map<String, dynamic>> _getTaskTrends(String groupBy, DateTime start, DateTime end) async {
     final snapshot = await _firestore
@@ -393,4 +374,4 @@ class AdvancedReportingService {
     
     return changes;
   }
-} 
+}

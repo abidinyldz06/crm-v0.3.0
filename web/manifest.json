@@ -1,22 +1,16 @@
 {
-    "name": "Vize CRM v0.2.5 - Real-time Edition",
-    "short_name": "Vize CRM",
-    "start_url": ".",
+    "name": "CRM v0.3.1",
+    "short_name": "CRM",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
-    "background_color": "#667eea",
-    "theme_color": "#667eea",
-    "description": "Vize Danışmanlık CRM v0.2.5 - Real-time Bildirimler ve Gelişmiş Müşteri Yönetimi",
+    "background_color": "#0B274A",
+    "theme_color": "#0F3D6E",
+    "description": "CRM v0.3.1 — Real-time bildirimler ve gelişmiş müşteri yönetimi",
     "orientation": "any",
     "prefer_related_applications": false,
     "categories": ["business", "productivity", "communication"],
     "lang": "tr",
-    "scope": "/",
-    "features": [
-        "real-time-notifications",
-        "firebase-cloud-messaging",
-        "responsive-design",
-        "pwa-support"
-    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",

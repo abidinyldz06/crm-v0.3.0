@@ -126,52 +126,12 @@ class ExportService {
     );
   }
 
-  // Finansal rapor CSV export
-  static Future<String?> exportFinancialReportToCSV(Map<String, dynamic> financialData) {
-    final List<Map<String, dynamic>> reportData = [
-      {
-        'kategori': 'Toplam Gelir',
-        'deger': financialData['toplamGelir'] ?? 0,
-        'aciklama': 'Tüm onaylanmış tekliflerden elde edilen toplam gelir',
-      },
-      {
-        'kategori': 'Bu Ay Gelir',
-        'deger': financialData['buAyGelir'] ?? 0,
-        'aciklama': 'Bu ay içinde elde edilen gelir',
-      },
-      {
-        'kategori': 'Geçen Ay Gelir',
-        'deger': financialData['gecenAyGelir'] ?? 0,
-        'aciklama': 'Geçen ay elde edilen gelir',
-      },
-      {
-        'kategori': 'Ortalama Teklif Tutarı',
-        'deger': financialData['ortalamaTeklifTutari'] ?? 0,
-        'aciklama': 'Onaylanmış tekliflerin ortalama tutarı',
-      },
-      {
-        'kategori': 'Bekleyen Ödemeler',
-        'deger': financialData['bekleyenOdemeler'] ?? 0,
-        'aciklama': 'Henüz tahsil edilmemiş ödemeler',
-      },
-    ];
-
-    return exportToCSV(
-      data: reportData,
-      fileName: 'finansal_rapor_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}',
-      headers: [
-        'Kategori',
-        'Değer (₺)',
-        'Açıklama',
-        'Rapor Tarihi',
-      ],
-      rowMapper: (dynamic data) => [
-        data['kategori']?.toString() ?? '',
-        NumberFormat('#,##0.00').format(data['deger'] ?? 0),
-        data['aciklama']?.toString() ?? '',
-        DateFormat(_dateFormat).format(DateTime.now()),
-      ],
-    );
+  // Finansal rapor CSV export (KALDIRILDI) — Yerine stub bırakıldı
+  static Future<String?> exportFinancialReportToCSV(Map<String, dynamic> financialData) async {
+    // Finans modülü uygulamadan çıkarıldığı için bu fonksiyon devre dışı.
+    // Geriye dönük çağrılar hata vermesin diye stub olarak bırakıldı.
+    // Kullanım varsa, çağıran kod bu dönüşe göre kullanıcıya bilgi verebilir.
+    return null;
   }
 
   // Detaylı analitik rapor
@@ -237,15 +197,17 @@ class ExportService {
     required int totalApplications,
     required int completedApplications,
     required int activeApplications,
-    required double totalRevenue,
-    required double monthlyRevenue,
+    // Finans modülü kaldırıldığı için gelir parametreleri devre dışı bırakıldı
+    double? totalRevenue,
+    double? monthlyRevenue,
     required List<Map<String, dynamic>> consultantPerformance,
   }) {
     final successRate = totalApplications > 0 
         ? (completedApplications / totalApplications * 100)
         : 0.0;
-    
-    final averageRevenue = completedApplications > 0
+
+    // Finans kaldırıldığı için averageRevenue hesaplaması devre dışı
+    final averageRevenue = (totalRevenue != null && completedApplications > 0)
         ? (totalRevenue / completedApplications)
         : 0.0;
     
@@ -255,9 +217,9 @@ class ExportService {
       'tamamlananBasvuru': completedApplications,
       'aktifBasvuru': activeApplications,
       'basariOrani': successRate.toStringAsFixed(1),
-      'toplamGelir': NumberFormat('#,##0.00').format(totalRevenue),
-      'aylikGelir': NumberFormat('#,##0.00').format(monthlyRevenue),
-      'ortalamaGelir': NumberFormat('#,##0.00').format(averageRevenue),
+      if (totalRevenue != null) 'toplamGelir': NumberFormat('#,##0.00').format(totalRevenue),
+      if (monthlyRevenue != null) 'aylikGelir': NumberFormat('#,##0.00').format(monthlyRevenue),
+      if (totalRevenue != null) 'ortalamaGelir': NumberFormat('#,##0.00').format(averageRevenue),
       'danismanSayisi': consultantPerformance.length,
       'enIyiDanisman': consultantPerformance.isNotEmpty 
           ? consultantPerformance.first['danismanAdi']

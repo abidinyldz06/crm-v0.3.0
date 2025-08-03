@@ -69,6 +69,84 @@ class AdvancedNotificationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // notifications_screen.dart uyumluluğu için ek arabirimler
+  // Okunmamış bildirim sayısı
+  Stream<int> get unreadCountStream => getUnreadNotificationCount();
+
+  // Bildirimler açık mı?
+  Future<bool> get notificationsEnabled async {
+    final prefs = await getNotificationPreferences();
+    // En az bir tercih açık ise etkin kabul edelim
+    return prefs.values.any((v) => v == true);
+  }
+
+  // Bildirim ayarları haritası
+  Future<Map<String, bool>> get notificationSettings async {
+    return await getNotificationPreferences();
+  }
+
+  // Tüm bildirimleri listele (NotificationModel ile)
+  Stream<List<NotificationModel>> getNotifications() {
+    final user = _auth.currentUser;
+    if (user == null) return Stream.value(<NotificationModel>[]);
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: user.uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              return NotificationModel.fromFirestore(doc);
+            }).toList());
+  }
+
+  // Bildirimleri aç/kapat
+  Future<void> toggleNotifications(bool enable) async {
+    final current = await getNotificationPreferences();
+    // Tüm anahtarları gelen enable ile set edelim
+    final updated = <String, bool>{};
+    if (current.isEmpty) {
+      // Varsayılan anahtarlar
+      updated.addAll({
+        'basvuru': enable,
+        'musteri': enable,
+        'odeme': enable,
+        'randevu': enable,
+        'sistem': enable,
+        'hatirlatma': enable,
+      });
+    } else {
+      current.forEach((k, v) => updated[k] = enable);
+    }
+    await saveNotificationPreferences(updated);
+  }
+
+  // Tekil bildirim ayarını güncelle
+  Future<void> updateNotificationSetting(String key, bool value) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await _firestore.runTransaction((tx) async {
+      final snap = await tx.get(docRef);
+      final data = snap.data() ?? {};
+      final prefs = Map<String, dynamic>.from(data['notificationPreferences'] ?? {});
+      prefs[key] = value;
+      tx.update(docRef, {'notificationPreferences': prefs});
+    });
+  }
+
+  // Test bildirimi gönder
+  Future<void> sendTestNotification() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    await sendNotification(
+      userId: user.uid,
+      title: 'Test Bildirimi',
+      message: 'Bu bir test bildirimidir',
+      type: NotificationType.genel,
+      data: {'source': 'test'},
+    );
+  }
+
   // Bildirim izinlerini iste
   Future<bool> requestPermissions() async {
     try {

@@ -13,6 +13,7 @@ import 'package:crm/screens/musteri_listesi.dart';
 import 'package:crm/screens/settings_screen_simple.dart';
 // import 'package:crm/screens/raporlar_ekrani.dart'; // Artık kullanılmıyor
 import 'package:crm/screens/takvim_ekrani.dart';
+import 'package:crm/screens/mesajlar_ekrani.dart';
 import 'package:crm/services/auth_service.dart';
 import 'package:crm/services/basvuru_servisi.dart';
 import 'package:crm/services/musteri_servisi.dart';
@@ -24,7 +25,6 @@ import 'package:crm/services/export_service.dart';
 import 'package:crm/screens/advanced_reporting_screen.dart';
 import 'package:crm/screens/musteri_ekle.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/screens/mesajlar_ekrani.dart';
 import 'package:crm/generated/l10n/app_localizations.dart';
 import 'package:crm/services/fcm_service.dart';
 import 'package:crm/utils/logger.dart';
@@ -177,14 +177,13 @@ class _DashboardV2State extends State<DashboardV2> {
                   const SizedBox.shrink(),
                 PopupMenuButton<int>(
                   onSelected: (int index) => setState(() => _selectedIndex = index),
-                  itemBuilder: (BuildContext context) => const <PopupMenuEntry<int>>[
-                    PopupMenuItem<int>(value: 4, child: Text('Çöp Kutusu')),
-                    PopupMenuItem<int>(value: 5, child: Text('Raporlar')),
-                    PopupMenuItem<int>(value: 6, child: Text('Otomasyon')),
-                    PopupMenuItem<int>(value: 7, child: Text('Görev Yönetimi')),
-                    PopupMenuItem<int>(value: 8, child: Text('Gelişmiş Raporlama')),
-                    PopupMenuItem<int>(value: 9, child: Text('Finans')),
-                    PopupMenuItem<int>(value: 10, child: Text('Mesajlar')),
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                    PopupMenuItem<int>(value: 4, child: Text(AppLocalizations.of(context)!.trash)),
+                    PopupMenuItem<int>(value: 5, child: Text(AppLocalizations.of(context)!.reports)),
+                    PopupMenuItem<int>(value: 6, child: Text(AppLocalizations.of(context)!.automation)),
+                    PopupMenuItem<int>(value: 7, child: Text(AppLocalizations.of(context)!.taskManagement)),
+                    PopupMenuItem<int>(value: 8, child: Text(AppLocalizations.of(context)!.advancedReporting)),
+                    PopupMenuItem<int>(value: 10, child: Text(AppLocalizations.of(context)!.messages)),
                   ],
                 ),
               ],
@@ -194,11 +193,11 @@ class _DashboardV2State extends State<DashboardV2> {
               currentIndex: _selectedIndex < 4 ? _selectedIndex : 0,
               onTap: (index) => setState(() => _selectedIndex = index),
               type: BottomNavigationBarType.fixed, // 4+ öğe için gerekli
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Ana Sayfa'),
-                BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Müşteriler'),
-                BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Başvurular'),
-                BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Takvim'),
+              items: [
+                BottomNavigationBarItem(icon: const Icon(Icons.home), label: AppLocalizations.of(context)!.mobileHome),
+                BottomNavigationBarItem(icon: const Icon(Icons.people), label: AppLocalizations.of(context)!.mobileCustomers),
+                BottomNavigationBarItem(icon: const Icon(Icons.assignment), label: AppLocalizations.of(context)!.mobileApplications),
+                BottomNavigationBarItem(icon: const Icon(Icons.calendar_month), label: AppLocalizations.of(context)!.mobileCalendar),
               ],
             ),
             floatingActionButton: _selectedIndex == 1
@@ -318,7 +317,6 @@ class _DashboardV2State extends State<DashboardV2> {
         case 6: return loc.mobileAutomation;
         case 7: return loc.mobileTasks;
         case 8: return loc.mobileAdvancedReporting;
-        case 9: return loc.mobileFinance;
         case 10: return loc.messages;
         default: return loc.appTitle;
       }
@@ -331,13 +329,13 @@ class _DashboardV2State extends State<DashboardV2> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Müşteri Türü Seçin'),
+          title: Text(AppLocalizations.of(context)!.addCustomer),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.person),
-                title: const Text('Bireysel Müşteri'),
+                title: Text(AppLocalizations.of(context)!.filterIndividual),
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MusteriEkle()));
@@ -345,7 +343,7 @@ class _DashboardV2State extends State<DashboardV2> {
               ),
               ListTile(
                 leading: const Icon(Icons.business),
-                title: const Text('Kurumsal Müşteri'),
+                title: Text(AppLocalizations.of(context)!.filterCorporate),
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KurumsalMusteriEkle()));
@@ -924,7 +922,7 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
         padding: const EdgeInsets.all(16.0),
         children: [
         // Bölümleri sabit sırayla göster
-          if (enabled.contains('kpi') && _currentUser!.role == 'admin')
+          if (enabled.contains('kpi') && _currentUser?.role == 'admin')
             _DashboardSection(
               title: AppLocalizations.of(context)!.performanceIndicators,
               actions: [
@@ -936,7 +934,7 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
                 IconButton(
                   icon: const Icon(Icons.refresh),
                   tooltip: 'Yenile',
-                  onPressed: () => _refreshKpis(),
+                  onPressed: _refreshKpis,
                 ),
               ],
               child: Padding(
@@ -1074,7 +1072,7 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: StreamBuilder<List<HatirlatmaModel>>(
-                  stream: _hatirlatmaServisi.getDanismanHatirlatmalari(_currentUser!.uid),
+                  stream: _hatirlatmaServisi.getDanismanHatirlatmalari(_currentUser?.uid ?? ''),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());

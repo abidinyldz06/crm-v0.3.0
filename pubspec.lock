@@ -433,10 +433,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: b1ac0fe2832c9cc95e5e88b57d627c5e68c223b9657f4b96e1487aa9098c7b82
+      sha256: df9763500dadba0155373e9cb44e202ce21bd9ed5de6bdbd05c5854e86839cb8
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.1"
+    version: "6.3.0"
   hashcodes:
     dependency: transitive
     description:
@@ -545,10 +545,10 @@ packages:
     dependency: "direct main"
     description:
       name: mailer
-      sha256: c6ae65c1d40cfe9c06fa50ff9be6c1cfb18cca60a7bb935e318163bd7f1f0d17
+      sha256: db61f51ea301e8dcbfe5894e037ccd30a6246eb0a7bcfa007aefa2fc11a8f96e
       url: "https://pub.dev"
     source: hosted
-    version: "6.4.1"
+    version: "6.5.0"
   matcher:
     dependency: transitive
     description:

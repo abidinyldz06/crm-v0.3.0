@@ -13,10 +13,26 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen>
     with SingleTickerProviderStateMixin {
   final AdvancedNotificationService _notificationService = AdvancedNotificationService();
-  
+
   late TabController _tabController;
   String _selectedFilter = 'Tümü';
   bool _showUnreadOnly = false;
+
+  // AdvancedNotificationService → NotificationModel dönüştürücü
+  NotificationModel _toNotificationModel(NotificationData n) {
+    return NotificationModel(
+      id: n.id,
+      title: n.title,
+      message: n.message,
+      type: n.type, // Zaten NotificationType
+      priority: NotificationPriority.normal, // Varsayılan öncelik
+      userId: n.userId,
+      basvuruId: (n.data)['basvuruId'] as String?,
+      isRead: n.isRead,
+      createdAt: n.createdAt,
+      readAt: null,
+    );
+  }
 
   @override
   void initState() {
@@ -114,7 +130,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       children: [
         // Okunmamış sayısı
         StreamBuilder<int>(
-          stream: _notificationService.unreadCountStream ?? _notificationService.getUnreadNotificationCount(),
+          stream: _notificationService.unreadCountStream,
           builder: (context, snapshot) {
             final unreadCount = snapshot.data ?? 0;
             if (unreadCount == 0) return const SizedBox.shrink();
@@ -155,18 +171,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         // Bildirim listesi
         Expanded(
           child: StreamBuilder<List<NotificationModel>>(
-            stream: _notificationService.getNotifications() ?? _notificationService.getUserNotifications().map((list) => list.map((n) => NotificationModel(
-              id: n.id,
-              title: n.title,
-              message: n.message,
-              type: n.type,
-              priority: NotificationPriority.normal,
-              userId: n.userId,
-              basvuruId: n.data['basvuruId'] as String?,
-              isRead: n.isRead,
-              createdAt: n.createdAt,
-              readAt: null,
-            )).toList()),
+            stream: _notificationService
+                .getNotifications(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(

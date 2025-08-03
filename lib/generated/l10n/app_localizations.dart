@@ -878,12 +878,6 @@ abstract class AppLocalizations {
   /// **'Gelişmiş Raporlama'**
   String get mobileAdvancedReporting;
 
-  /// No description provided for @mobileFinance.
-  ///
-  /// In tr, this message translates to:
-  /// **'Finans'**
-  String get mobileFinance;
-
   /// No description provided for @mobileMessages.
   ///
   /// In tr, this message translates to:

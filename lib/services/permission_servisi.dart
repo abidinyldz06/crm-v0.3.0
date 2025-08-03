@@ -15,10 +15,8 @@ enum Permission {
   basvuruSil,
   basvuruDanismanAta,
   
-  // Finans işlemleri
-  finansGoruntule,
+  // (Finans işlemleri kaldırıldı)
   teklifOlustur,
-  odemeEkle,
   
   // Raporlama
   raporGoruntule,
@@ -43,16 +41,13 @@ class PermissionServisi {
       Permission.basvuruGoruntule,
       Permission.basvuruEkle,
       Permission.basvuruDuzenle,
-      Permission.finansGoruntule,
       Permission.teklifOlustur,
-      Permission.odemeEkle,
       Permission.raporGoruntule,
       Permission.mesajGonder,
     },
     'viewer': {
       Permission.musteriGoruntule,
       Permission.basvuruGoruntule,
-      Permission.finansGoruntule,
       Permission.raporGoruntule,
     },
   };
@@ -107,4 +102,4 @@ extension PermissionCheck on KullaniciModel {
   bool canAll(List<Permission> permissions) {
     return PermissionServisi.hasAllPermissions(this, permissions);
   }
-} 
+}
