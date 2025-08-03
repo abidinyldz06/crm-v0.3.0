@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as p;
 
 class StorageServisi {
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -139,4 +138,4 @@ class StorageServisi {
       return null;
     }
   }
-} 
+}

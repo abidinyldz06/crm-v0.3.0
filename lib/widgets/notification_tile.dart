@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:crm/services/advanced_notification_service.dart';
 import 'package:crm/models/notification_model.dart';
 import 'package:intl/intl.dart';
 
@@ -54,7 +53,7 @@ class NotificationTile extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                if (notification.priority == NotificationPriority.yüksek ||
+                if (notification.priority == NotificationPriority.yuksek ||
                     notification.priority == NotificationPriority.kritik)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -155,7 +154,7 @@ class NotificationTile extends StatelessWidget {
     }
 
     return CircleAvatar(
-      backgroundColor: iconColor.withOpacity(0.1),
+      backgroundColor: iconColor.withValues(alpha: 0.1),
       child: Icon(
         iconData,
         color: iconColor,
@@ -181,11 +180,11 @@ class NotificationTile extends StatelessWidget {
 
   Color _getPriorityColor(NotificationPriority priority) {
     switch (priority) {
-      case NotificationPriority.düşük:
+      case NotificationPriority.dusuk:
         return Colors.grey;
       case NotificationPriority.normal:
         return Colors.blue;
-      case NotificationPriority.yüksek:
+      case NotificationPriority.yuksek:
         return Colors.orange;
       case NotificationPriority.kritik:
         return Colors.red;
@@ -194,14 +193,14 @@ class NotificationTile extends StatelessWidget {
 
   String _getPriorityText(NotificationPriority priority) {
     switch (priority) {
-      case NotificationPriority.düşük:
+      case NotificationPriority.dusuk:
         return 'DÜŞÜK';
       case NotificationPriority.normal:
         return 'NORMAL';
-      case NotificationPriority.yüksek:
+      case NotificationPriority.yuksek:
         return 'YÜKSEK';
       case NotificationPriority.kritik:
         return 'ACİL';
     }
   }
-} 
+}

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme_v2.dart';
 import '../models/automation_rule_model.dart';
 import '../services/automation_service.dart';
 import '../services/sms_automation_service.dart';

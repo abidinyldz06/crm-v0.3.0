@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/advanced_reporting_service.dart';
-import '../theme_v2.dart';
 
 // AppTheme sınıfını tanımlıyorum
 class AppTheme {
@@ -546,4 +545,4 @@ class _AdvancedReportingScreenV2State extends State<AdvancedReportingScreenV2> {
       );
     }
   }
-} 
+}

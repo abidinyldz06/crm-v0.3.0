@@ -180,7 +180,7 @@ class _BasvuruDetayState extends State<BasvuruDetay> {
                       // Müşteri Bilgi Kartı
                       Card(
                         elevation: 0,
-                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+                        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.5),
                         child: ListTile(
                            leading: const Icon(Icons.person_outline),
                            title: Text(_musteri!.adSoyad, style: Theme.of(context).textTheme.titleLarge),
@@ -340,4 +340,4 @@ class _BasvuruDetayState extends State<BasvuruDetay> {
       ),
     );
   }
-} 
+}

@@ -17,6 +17,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String error = '';
   bool loading = false;
 
+  // Yeni sürüm etiketi
+  static const String appVersionLabel = 'v0.3';
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -44,14 +47,36 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Logo / Başlık
-                  Text(
-                    'Nobel Vize CRM',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
+                  // Logo / Başlık + Versiyon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Nobel Vize CRM',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: Colors.white.withOpacity(0.25)),
+                        ),
+                        child: Text(
+                          appVersionLabel,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Text(

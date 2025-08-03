@@ -319,55 +319,6 @@ class DashboardStatsService {
     _lastCacheTime = null;
   }
 
-  // Eksik fonksiyonlar
-  Stream<int> getTotalCustomers() {
-    return _firestore
-        .collection('customers')
-        .where('isDeleted', isEqualTo: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
-
-  Stream<int> getTotalApplications() {
-    return _firestore
-        .collection('applications')
-        .where('isDeleted', isEqualTo: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
-
-  Stream<int> getThisMonthCustomers() {
-    final now = DateTime.now();
-    final startOfMonth = DateTime(now.year, now.month, 1);
-    
-    return _firestore
-        .collection('customers')
-        .where('isDeleted', isEqualTo: false)
-        .where('olusturulmaTarihi', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
-
-  Stream<int> getThisMonthApplications() {
-    final now = DateTime.now();
-    final startOfMonth = DateTime(now.year, now.month, 1);
-    
-    return _firestore
-        .collection('applications')
-        .where('isDeleted', isEqualTo: false)
-        .where('olusturulmaTarihi', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
-
-  Stream<int> getTotalCorporateCustomers() {
-    return _firestore
-        .collection('corporate_customers')
-        .where('isDeleted', isEqualTo: false)
-        .snapshots()
-        .map((snapshot) => snapshot.docs.length);
-  }
-
 // Gelişmiş dashboard istatistikleri
   Stream<DashboardStats> getAdvancedStats() {
     return Rx.combineLatest7(

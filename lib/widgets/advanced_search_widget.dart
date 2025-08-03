@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/advanced_search_service.dart';
-import '../models/musteri_model.dart';
 import '../models/basvuru_model.dart';
 
 class AdvancedSearchWidget extends StatefulWidget {

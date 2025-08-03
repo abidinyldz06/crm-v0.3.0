@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:crm/services/advanced_notification_service.dart';
 import 'package:crm/widgets/notification_tile.dart';
-import 'package:intl/intl.dart';
+import 'package:crm/models/notification_model.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -21,7 +21,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    // Ayar sekmesi devre dışı olduğu için length = 1
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
@@ -88,16 +89,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             tooltip: 'Tümünü okundu işaretle',
           ),
         ],
+        // Ayar sekmesi geçici olarak devre dışı (serviste eksik API'ler var)
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(
-              icon: const Icon(Icons.notifications),
+              icon: Icon(Icons.notifications),
               text: 'Bildirimler',
-            ),
-            Tab(
-              icon: const Icon(Icons.settings),
-              text: 'Ayarlar',
             ),
           ],
         ),
@@ -106,7 +104,6 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         controller: _tabController,
         children: [
           _buildNotificationsTab(),
-          _buildSettingsTab(),
         ],
       ),
     );
@@ -117,7 +114,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       children: [
         // Okunmamış sayısı
         StreamBuilder<int>(
-          stream: _notificationService.unreadCountStream,
+          stream: _notificationService.unreadCountStream ?? _notificationService.getUnreadNotificationCount(),
           builder: (context, snapshot) {
             final unreadCount = snapshot.data ?? 0;
             if (unreadCount == 0) return const SizedBox.shrink();
@@ -158,7 +155,18 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         // Bildirim listesi
         Expanded(
           child: StreamBuilder<List<NotificationModel>>(
-            stream: _notificationService.getNotifications(),
+            stream: _notificationService.getNotifications() ?? _notificationService.getUserNotifications().map((list) => list.map((n) => NotificationModel(
+              id: n.id,
+              title: n.title,
+              message: n.message,
+              type: n.type,
+              priority: NotificationPriority.normal,
+              userId: n.userId,
+              basvuruId: n.data['basvuruId'] as String?,
+              isRead: n.isRead,
+              createdAt: n.createdAt,
+              readAt: null,
+            )).toList()),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(
@@ -253,140 +261,17 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  Widget _buildSettingsTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Genel ayarlar
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.notifications, color: Theme.of(context).primaryColor),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Genel Bildirim Ayarları',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SwitchListTile(
-                    title: const Text('Bildirimleri Etkinleştir'),
-                    subtitle: const Text('Tüm bildirimleri aç/kapat'),
-                    value: _notificationService.notificationsEnabled,
-                    onChanged: (value) {
-                      _notificationService.toggleNotifications(value);
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Bildirim türü ayarları
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.category, color: Theme.of(context).primaryColor),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Bildirim Türleri',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...NotificationType.values.map((type) {
-                    final isEnabled = _notificationService.notificationSettings[type] ?? true;
-                    return SwitchListTile(
-                      title: Text(_getNotificationTypeName(type)),
-                      subtitle: Text(_getNotificationTypeDescription(type)),
-                      value: isEnabled && _notificationService.notificationsEnabled,
-                      onChanged: _notificationService.notificationsEnabled ? (value) {
-                        _notificationService.updateNotificationSetting(type, value);
-                        setState(() {});
-                      } : null,
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Test bildirimi
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.science, color: Theme.of(context).primaryColor),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Test Bildirimi',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      await _notificationService.sendTestNotification(
-                        title: 'Test Bildirimi',
-                        body: 'Bu bir test bildirimidir. ${DateTime.now().toString()}',
-                        type: NotificationType.genel,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Test bildirimi gönderildi')),
-                      );
-                    },
-                    icon: const Icon(Icons.send),
-                    label: const Text('Test Bildirimi Gönder'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Ayar sekmesi geçici olarak devre dışı bırakıldı
 
   void _handleNotificationTap(NotificationModel notification) {
     // Bildirim türüne göre yönlendirme
     switch (notification.type) {
       case NotificationType.basvuruOlusturuldu:
       case NotificationType.basvuruDurumGuncellendi:
-        if (notification.relatedId != null) {
+        if (notification.basvuruId != null) {
           // Başvuru detay sayfasına yönlendir
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Başvuru detayına yönlendiriliyor: ${notification.relatedId}')),
+            SnackBar(content: Text('Başvuru detayına yönlendiriliyor: ${notification.basvuruId}')),
           );
         }
         break;
@@ -422,8 +307,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         return 'Hatırlatmalar';
       case NotificationType.mesaj:
         return 'Mesajlar';
-      case NotificationType.odeme:
-        return 'Ödemeler';
+      case NotificationType.randevu:
+        return 'Randevular';
       case NotificationType.sistem:
         return 'Sistem Bildirimleri';
       case NotificationType.genel:
@@ -443,12 +328,12 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         return 'Hatırlatma bildirimleri al';
       case NotificationType.mesaj:
         return 'Yeni mesaj geldiğinde bildirim al';
-      case NotificationType.odeme:
-        return 'Ödeme bildirimleri al';
+      case NotificationType.randevu:
+        return 'Randevu bildirimleri al';
       case NotificationType.sistem:
         return 'Sistem güncellemeleri ve bakım bildirimleri';
       case NotificationType.genel:
         return 'Genel duyuru ve bildirimler';
     }
   }
-} 
+}

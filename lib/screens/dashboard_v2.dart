@@ -1,7 +1,5 @@
 import 'package:crm/models/basvuru_model.dart';
-import 'package:crm/models/konusma_model.dart';
 import 'package:crm/models/kullanici_model.dart';
-import 'package:crm/models/musteri_model.dart';
 import 'package:crm/screens/basvuru_listesi.dart';
 import 'package:crm/screens/cop_kutusu_ekrani.dart';
 import 'automation_management_screen.dart';
@@ -12,28 +10,24 @@ import 'package:crm/screens/kurumsal_musteri_ekle.dart';
 import 'package:crm/screens/login_screen.dart';
 import 'package:crm/screens/global_search_screen.dart';
 import 'package:crm/screens/musteri_listesi.dart';
-import 'package:crm/screens/profil_ekrani.dart';
 import 'package:crm/screens/settings_screen_simple.dart';
 // import 'package:crm/screens/raporlar_ekrani.dart'; // Artık kullanılmıyor
 import 'package:crm/screens/takvim_ekrani.dart';
 import 'package:crm/services/auth_service.dart';
 import 'package:crm/services/basvuru_servisi.dart';
-import 'package:crm/services/mesajlasma_servisi.dart';
 import 'package:crm/services/musteri_servisi.dart';
 import 'package:crm/services/hatirlatma_servisi.dart';
 import 'package:crm/models/hatirlatma_model.dart';
 import 'package:crm/widgets/basvuru_ozet_card.dart';
-import 'package:crm/widgets/ozet_karti.dart';
-import 'package:crm/widgets/kpi_dashboard.dart';
 // import 'package:crm/services/kpi_service.dart'; // Geçici olarak devre dışı
 import 'package:crm/services/export_service.dart';
-import 'package:crm/widgets/loading_states.dart';
 import 'package:crm/screens/advanced_reporting_screen.dart';
 import 'package:crm/screens/musteri_ekle.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/screens/mesajlar_ekrani.dart';
 import 'package:crm/generated/l10n/app_localizations.dart';
 import 'package:crm/services/fcm_service.dart';
+import 'package:crm/utils/logger.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -99,7 +93,7 @@ class _KpiCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
                 child: Icon(icon, color: iconColor, size: 24),
               ),
               const SizedBox(width: 12),
@@ -136,7 +130,6 @@ class DashboardV2 extends StatefulWidget {
 
 class _DashboardV2State extends State<DashboardV2> {
   int _selectedIndex = 0;
-  final MesajlasmaServisi _mesajlasmaServisi = MesajlasmaServisi();
   // final KPIService _kpiService = KPIService(); // Geçici olarak devre dışı
   final String? _currentUserUid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -146,7 +139,7 @@ class _DashboardV2State extends State<DashboardV2> {
     _requestNotificationPermissions();
     // Firebase Messaging'i güvenli şekilde dinle
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Got a message whilst in the foreground!');
+      AppLogger.debug('Got a message whilst in the foreground!', tag: 'FCM');
       if (message.notification != null && mounted) {
         // UI thread'i bloke etmemek için Future.microtask kullan
         Future.microtask(() {
@@ -184,7 +177,7 @@ class _DashboardV2State extends State<DashboardV2> {
                   const SizedBox.shrink(),
                 PopupMenuButton<int>(
                   onSelected: (int index) => setState(() => _selectedIndex = index),
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                  itemBuilder: (BuildContext context) => const <PopupMenuEntry<int>>[
                     PopupMenuItem<int>(value: 4, child: Text('Çöp Kutusu')),
                     PopupMenuItem<int>(value: 5, child: Text('Raporlar')),
                     PopupMenuItem<int>(value: 6, child: Text('Otomasyon')),
@@ -455,7 +448,7 @@ class _DashboardV2State extends State<DashboardV2> {
         ),
       ],
       onSelected: (String value) {
-        print('PopupMenu onSelected çağrıldı: $value');
+        AppLogger.debug('PopupMenu onSelected çağrıldı: $value', tag: 'UI');
         if (value == 'settings') {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -463,10 +456,10 @@ class _DashboardV2State extends State<DashboardV2> {
         } else if (value == 'test') {
           fcmService.sendTestNotification();
         } else if (value.startsWith('notification_')) {
-          print('Bildirim seçildi: $value');
+          AppLogger.debug('Bildirim seçildi: $value', tag: 'UI');
           _handleNotificationTap(value, fcmService);
         } else {
-          print('Bilinmeyen değer: $value');
+          AppLogger.warn('Bilinmeyen değer: $value', tag: 'UI');
         }
       },
         );
@@ -515,7 +508,8 @@ class _DashboardV2State extends State<DashboardV2> {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: fcmService.getNotificationColor(notification['type']).withOpacity(0.1),
+                  // withOpacity deprecated: .withValues(alpha: x) kullan
+                  color: fcmService.getNotificationColor(notification['type']).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
@@ -606,11 +600,11 @@ class _DashboardV2State extends State<DashboardV2> {
   void _handleNotificationTap(String notificationValue, FCMService fcmService) {
     // notification_ prefix'ini kaldır
     final notificationId = notificationValue.replaceFirst('notification_', '');
-    print('Bildirime tıklandı: $notificationId');
+    AppLogger.info('Bildirime tıklandı: $notificationId', tag: 'UI');
     
     // Bildirimi okundu olarak işaretle
     fcmService.markAsRead(notificationId);
-    print('Bildirim okundu olarak işaretlendi');
+    AppLogger.info('Bildirim okundu olarak işaretlendi', tag: 'UI');
     
     // Bildirim tipine göre sayfa yönlendirmesi
     final notification = fcmService.notifications.firstWhere(
@@ -774,7 +768,8 @@ class _DashboardV2State extends State<DashboardV2> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              // withOpacity deprecated: .withValues(alpha: x) kullan
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),

@@ -26,7 +26,7 @@ class DashboardWidgets {
                   Container(
                     padding: const EdgeInsets.all(8), // 12'den 8'e düşürüldü
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(icon, color: color, size: 20), // 24'ten 20'ye düşürüldü
@@ -89,7 +89,7 @@ class DashboardWidgets {
               Container(
                 padding: const EdgeInsets.all(8), // 12'den 8'e düşürüldü
                 decoration: BoxDecoration(
-                  color: (color ?? Colors.blue).withOpacity(0.1),
+color: (color ?? Colors.blue).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(icon, color: color ?? Colors.blue, size: 20), // 24'ten 20'ye düşürüldü
@@ -318,7 +318,7 @@ class DashboardWidgets {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4), // Padding azaltıldı
                     leading: CircleAvatar(
                       radius: 12, // 20'den 12'ye düşürüldü
-                      backgroundColor: Colors.blue.withOpacity(0.1),
+backgroundColor: Colors.blue.withValues(alpha: 0.1),
                       child: Icon(
                         activity['icon'] ?? Icons.info,
                         color: Colors.blue,
@@ -420,4 +420,4 @@ class DashboardWidgets {
       children: children,
     );
   }
-} 
+}

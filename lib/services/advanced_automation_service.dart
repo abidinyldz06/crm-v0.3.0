@@ -16,6 +16,7 @@ class AdvancedAutomationService {
     String? applicationId,
   }) async {
     try {
+      // TaskModel imzasında olmayan alanları kaldır (attachments, notes) ve zorunlu alanları sağla
       final task = TaskModel(
         id: '',
         title: title,
@@ -28,9 +29,8 @@ class AdvancedAutomationService {
         createdAt: DateTime.now(),
         customerId: customerId,
         applicationId: applicationId,
-        tags: [],
-        attachments: [],
-        notes: [],
+        tags: const [],
+        updatedAt: DateTime.now(),
       );
 
       await _firestore.collection('tasks').add(task.toFirestore());
@@ -216,7 +216,8 @@ class AdvancedAutomationService {
             description: _processTemplate(action['description'], data),
             assignedTo: action['assignedTo'],
             priority: TaskPriority.values.firstWhere((e) => e.name == action['priority']),
-            type: TaskType.values.firstWhere((e) => e.name == action['type']),
+            // Bazı konfigurasyonlarda 'taskType' anahtarı kullanılabiliyor; geriye dönük uyumluluk
+            type: TaskType.values.firstWhere((e) => e.name == (action['taskType'] ?? action['type'])),
             dueDate: DateTime.parse(action['dueDate']),
             customerId: data['customerId'],
             applicationId: data['applicationId'],
@@ -242,4 +243,4 @@ class AdvancedAutomationService {
     });
     return result;
   }
-} 
+}

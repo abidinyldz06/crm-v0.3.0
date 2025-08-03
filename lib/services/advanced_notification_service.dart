@@ -2,21 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/kullanici_model.dart';
+import '../models/notification_model.dart';
 
-enum NotificationType {
-  basvuru,
-  musteri,
-  odeme,
-  randevu,
-  sistem,
-  hatirlatma,
-}
-
+/// Bu servis, veriyi NotificationModel (lib/models/notification_model.dart) ile hizalar.
+/// Firestore alan adları NotificationModel.toFirestore / fromFirestore ile uyumludur.
 class NotificationData {
   final String id;
   final String title;
-  final String body;
+  final String message;
   final NotificationType type;
   final Map<String, dynamic> data;
   final DateTime createdAt;
@@ -26,7 +19,7 @@ class NotificationData {
   NotificationData({
     required this.id,
     required this.title,
-    required this.body,
+    required this.message,
     required this.type,
     required this.data,
     required this.createdAt,
@@ -35,27 +28,30 @@ class NotificationData {
   });
 
   factory NotificationData.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final map = doc.data() as Map<String, dynamic>;
+    // NotificationModel ile uyumlu alanlar
+    final typeStr = map['type'] as String?;
+    final NotificationType t = NotificationType.values.firstWhere(
+      (e) => e.toString().split('.').last == typeStr,
+      orElse: () => NotificationType.genel,
+    );
     return NotificationData(
       id: doc.id,
-      title: data['title'] ?? '',
-      body: data['body'] ?? '',
-      type: NotificationType.values.firstWhere(
-        (e) => e.name == data['type'],
-        orElse: () => NotificationType.sistem,
-      ),
-      data: Map<String, dynamic>.from(data['data'] ?? {}),
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      isRead: data['isRead'] ?? false,
-      userId: data['userId'] ?? '',
+      title: map['title'] ?? '',
+      message: map['message'] ?? (map['body'] ?? ''),
+      type: t,
+      data: Map<String, dynamic>.from(map['data'] ?? {}),
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      isRead: map['isRead'] ?? false,
+      userId: map['userId'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      'body': body,
-      'type': type.name,
+      'message': message, // NotificationModel ile hizalı alan adı
+      'type': type.toString().split('.').last,
       'data': data,
       'createdAt': Timestamp.fromDate(createdAt),
       'isRead': isRead,
@@ -123,7 +119,7 @@ class AdvancedNotificationService {
   Future<void> sendNotification({
     required String userId,
     required String title,
-    required String body,
+    required String message,
     required NotificationType type,
     Map<String, dynamic>? data,
   }) async {
@@ -131,18 +127,18 @@ class AdvancedNotificationService {
       final notification = NotificationData(
         id: '',
         title: title,
-        body: body,
+        message: message,
         type: type,
         data: data ?? {},
         createdAt: DateTime.now(),
         userId: userId,
       );
 
-      // Firestore'a kaydet
+      // Firestore'a kaydet (NotificationModel şemasına uygun)
       await _firestore.collection('notifications').add(notification.toMap());
 
       // Push notification gönder (gerçek uygulamada server-side yapılır)
-      await _sendPushNotification(userId, title, body, data);
+      await _sendPushNotification(userId, title, message, data);
     } catch (e) {
       print('Bildirim gönderme hatası: $e');
     }
@@ -152,7 +148,7 @@ class AdvancedNotificationService {
   Future<void> _sendPushNotification(
     String userId,
     String title,
-    String body,
+    String message,
     Map<String, dynamic>? data,
   ) async {
     try {
@@ -162,7 +158,7 @@ class AdvancedNotificationService {
 
       if (fcmToken != null) {
         // Gerçek uygulamada burada server-side API çağrısı yapılır
-        print('Push notification gönderildi: $title - $body');
+        print('Push notification gönderildi: $title - $message');
       }
     } catch (e) {
       print('Push notification hatası: $e');
@@ -240,8 +236,8 @@ class AdvancedNotificationService {
     await sendNotification(
       userId: danismanId,
       title: 'Yeni Başvuru',
-      body: '$musteriAdi adlı müşteriden $basvuruTuru başvurusu geldi.',
-      type: NotificationType.basvuru,
+      message: '$musteriAdi adlı müşteriden $basvuruTuru başvurusu geldi.',
+      type: NotificationType.basvuruOlusturuldu,
       data: {
         'musteriAdi': musteriAdi,
         'basvuruTuru': basvuruTuru,
@@ -258,8 +254,8 @@ class AdvancedNotificationService {
     await sendNotification(
       userId: userId,
       title: 'Ödeme Hatırlatması',
-      body: '$musteriAdi - ₺${tutar.toStringAsFixed(2)} ödeme bekleniyor.',
-      type: NotificationType.odeme,
+      message: '$musteriAdi - ₺${tutar.toStringAsFixed(2)} ödeme bekleniyor.',
+      type: NotificationType.genel,
       data: {
         'musteriAdi': musteriAdi,
         'tutar': tutar,
@@ -276,7 +272,7 @@ class AdvancedNotificationService {
     await sendNotification(
       userId: userId,
       title: 'Randevu Hatırlatması',
-      body: '$musteriAdi ile ${_formatDate(randevuTarihi)} tarihinde randevunuz var.',
+      message: '$musteriAdi ile ${_formatDate(randevuTarihi)} tarihinde randevunuz var.',
       type: NotificationType.randevu,
       data: {
         'musteriAdi': musteriAdi,
@@ -294,8 +290,8 @@ class AdvancedNotificationService {
     await sendNotification(
       userId: userId,
       title: 'Başvuru Durumu Güncellendi',
-      body: '$musteriAdi adlı müşterinin başvuru durumu: $yeniDurum',
-      type: NotificationType.basvuru,
+      message: '$musteriAdi adlı müşterinin başvuru durumu: $yeniDurum',
+      type: NotificationType.basvuruDurumGuncellendi,
       data: {
         'musteriAdi': musteriAdi,
         'yeniDurum': yeniDurum,
@@ -314,7 +310,7 @@ class AdvancedNotificationService {
       await sendNotification(
         userId: userId,
         title: title,
-        body: body,
+        message: body,
         type: NotificationType.sistem,
         data: data,
       );

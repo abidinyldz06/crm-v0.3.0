@@ -142,7 +142,7 @@ class AdvancedCharts {
                       dotData: FlDotData(show: true),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Colors.blue.withOpacity(0.3),
+color: Colors.blue.withValues(alpha: 0.3),
                       ),
                     ),
                   ],

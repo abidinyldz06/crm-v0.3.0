@@ -86,13 +86,13 @@ class BasvuruTrendLineChart extends StatelessWidget {
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3),
+color: Colors.grey.withValues(alpha: 0.3),
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               strokeWidth: 1,
             );
           },
@@ -141,7 +141,7 @@ class BasvuruTrendLineChart extends StatelessWidget {
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
         ),
         minX: 0,
         maxX: (data.length - 1).toDouble(),
@@ -154,10 +154,10 @@ class BasvuruTrendLineChart extends StatelessWidget {
             }).toList(),
             isCurved: true,
             gradient: LinearGradient(
-              colors: [
-                Colors.blue.withOpacity(0.8),
-                Colors.blue.withOpacity(0.3),
-              ],
+colors: [
+                  Colors.blue.withValues(alpha: 0.8),
+                  Colors.blue.withValues(alpha: 0.3),
+                ],
             ),
             barWidth: 3,
             isStrokeCapRound: true,
@@ -165,9 +165,9 @@ class BasvuruTrendLineChart extends StatelessWidget {
             belowBarData: BarAreaData(
               show: true,
               gradient: LinearGradient(
-                colors: [
-                  Colors.blue.withOpacity(0.3),
-                  Colors.blue.withOpacity(0.1),
+colors: [
+                  Colors.blue.withValues(alpha: 0.3),
+                  Colors.blue.withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -283,9 +283,9 @@ class AylikBasvuruBarChart extends StatelessWidget {
               BarChartRodData(
                 toY: entry.value.toDouble(),
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.blue.withOpacity(0.8),
-                    Colors.blue.withOpacity(0.4),
+colors: [
+                    Colors.blue.withValues(alpha: 0.8),
+                    Colors.blue.withValues(alpha: 0.4),
                   ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,

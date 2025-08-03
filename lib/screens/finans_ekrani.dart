@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme_v2.dart';
+import '../theme_v2.dart' as theme_v2;
 
 class FinansEkrani extends StatefulWidget {
   const FinansEkrani({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class _FinansEkraniState extends State<FinansEkrani> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Finans Yönetimi'),
-        backgroundColor: AppTheme.primaryColor,
+        backgroundColor: theme_v2.AppThemeV2.lightTheme.colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       body: const Center(
@@ -47,4 +47,4 @@ class _FinansEkraniState extends State<FinansEkrani> {
       ),
     );
   }
-} 
+}

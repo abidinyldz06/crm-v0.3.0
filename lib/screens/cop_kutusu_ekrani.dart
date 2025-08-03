@@ -2,7 +2,6 @@ import 'package:crm/models/basvuru_model.dart';
 import 'package:crm/models/musteri_model.dart';
 import 'package:crm/services/basvuru_servisi.dart';
 import 'package:crm/services/musteri_servisi.dart';
-import 'package:crm/widgets/basvuru_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class CopKutusuEkrani extends StatelessWidget {
@@ -126,4 +125,4 @@ class _SilinmisBasvurularListesi extends StatelessWidget {
       },
     );
   }
-} 
+}

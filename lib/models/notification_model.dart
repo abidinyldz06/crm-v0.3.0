@@ -12,9 +12,9 @@ enum NotificationType {
 }
 
 enum NotificationPriority {
-  düşük,
+  dusuk,
   normal,
-  yüksek,
+  yuksek,
   kritik
 }
 
@@ -55,7 +55,9 @@ class NotificationModel {
         orElse: () => NotificationType.genel,
       ),
       priority: NotificationPriority.values.firstWhere(
-        (e) => e.toString().split('.').last == data['priority'],
+        (e) => e.toString().split('.').last == data['priority'] || 
+               (data['priority'] == 'düşük' && e == NotificationPriority.dusuk) ||
+               (data['priority'] == 'yüksek' && e == NotificationPriority.yuksek),
         orElse: () => NotificationPriority.normal,
       ),
       userId: data['userId'],
@@ -105,4 +107,4 @@ class NotificationModel {
       readAt: readAt ?? this.readAt,
     );
   }
-} 
+}

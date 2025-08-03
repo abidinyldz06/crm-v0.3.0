@@ -1,7 +1,7 @@
 name: crm
 description: A new Flutter project.
 publish_to: 'none' 
-version: 0.2.6+1
+version: 0.3.0+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   
   cupertino_icons: ^1.0.6
+  cached_network_image: ^3.3.1
   firebase_core: ^3.1.1
   firebase_auth: ^5.1.1
   cloud_firestore: ^5.0.2
@@ -25,19 +26,21 @@ dependencies:
   fl_chart: ^0.69.0
   shared_preferences: ^2.2.2
   provider: ^6.1.1
+  flutter_localizations:
+    sdk: flutter
+  rxdart: ^0.27.7
+  csv: ^5.1.1
+  universal_html: ^2.2.4 
+  path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_gen: ^5.4.0
+  flutter_lints: ^3.0.2
 
-  # Ek paketler
-  flutter_localizations:
-    sdk: flutter
-  rxdart: ^0.27.7
+  # Ek paketler (geliştirme)
   table_calendar: ^3.0.9
-  csv: ^5.1.1
-  universal_html: ^2.2.4 
 
 flutter:
   uses-material-design: true
