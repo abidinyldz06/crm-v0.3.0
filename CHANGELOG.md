@@ -3,6 +3,39 @@
 
 ## [v0.2.5] - 2025-01-27
 
+## v0.3.0 — 2025-08-04
+
+### 🚀 Öne Çıkanlar
+- Versiyon ve sürüm metinleri güncellendi:
+  - web/index.html başlık ve loading ekranı: “Vize CRM v0.3.0 - Real-time Notifications” ve “v0.3.0 Real-time Edition”
+  - web/manifest.json: “Vize CRM v0.3.0 - Real-time Edition” ve açıklama güncellendi
+  - Login ekranı rozet metni: “v0.3.0 Real-time Edition”
+- Bildirim modeli ve kartları UTF-8/illegal character hatalarına karşı düzeltildi:
+  - NotificationPriority enum değerleri ASCII’ye çekildi: dusuk, yuksek, kritik
+  - notification_tile.dart enum kullanım yerleri güncellendi
+  - Eski Firestore verileriyle uyumluluk için fromFirestore mapping eklendi (düşük/yüksek -> dusuk/yuksek)
+- Derleme ve bağımlılık düzeltmeleri:
+  - cached_network_image eklendi ve pub get yapıldı
+  - flutter analyze ile uyarılar gözden geçirildi, hatalar azaltıldı
+
+### 🔧 Teknik Detaylar
+- Dosyalar:
+  - lib/models/notification_model.dart
+  - lib/widgets/notification_tile.dart
+  - web/index.html
+  - web/manifest.json
+  - lib/screens/login_screen.dart
+  - pubspec.yaml
+- Komutlar:
+  - flutter pub get
+  - flutter analyze
+  - git tag v0.3.0, push (origin: Crmgunceleme)
+
+### 📦 Dağıtım/Notlar
+- PWA/Manifest cache sebebiyle tarayıcı eski sürüm dizesini gösterebilir.
+  - Çözüm: Hard refresh (Ctrl+F5), Application > Clear storage, ya da yüklü PWA’yı kaldırıp sayfayı yeniden açınız.
+
+---
 ### 🔔 Real-time Bildirimler ve Firebase Cloud Messaging Entegrasyonu
 - **Firebase Cloud Messaging (FCM) Sistemi:**
   - FCMService ile tam Firebase Cloud Messaging entegrasyonu
@@ -423,4 +456,4 @@
 
 *   `flutterfire` yapılandırma sorunları giderildi.
 *   Flutter web render motoru `canvaskit` olarak ayarlanarak performans ve uyumluluk artırıldı.
-*   Eksik olan `firebase_options.dart` dosyası manuel olarak oluşturularak proje çalışır hale getirildi. 
+*   Eksik olan `firebase_options.dart` dosyası manuel olarak oluşturularak proje çalışır hale getirildi.
