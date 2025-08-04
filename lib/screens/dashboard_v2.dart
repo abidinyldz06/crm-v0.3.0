@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:crm/generated/l10n/app_localizations.dart';
 import 'package:crm/services/fcm_service.dart';
 import 'package:crm/utils/logger.dart';
+import 'package:crm/utils/responsive_layout.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -942,35 +943,55 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: [
-                        _KpiCard(
-                          icon: Icons.trending_up,
-                          iconColor: Colors.green,
-                          value: _kpiConversion,
-                          label: AppLocalizations.of(context)!.conversionRate,
-                        ),
-                        _KpiCard(
-                          icon: Icons.schedule,
-                          iconColor: Colors.blue,
-                          value: _kpiAvgDays,
-                          label: AppLocalizations.of(context)!.averageProcessingTime,
-                        ),
-                        _KpiCard(
-                          icon: Icons.star,
-                          iconColor: Colors.orange,
-                          value: _kpiSatisfaction,
-                          label: AppLocalizations.of(context)!.customerSatisfaction,
-                        ),
-                        _KpiCard(
-                          icon: Icons.trending_up,
-                          iconColor: Colors.purple,
-                          value: _kpiMonthlyGrowth,
-                          label: AppLocalizations.of(context)!.monthlyGrowth,
-                        ),
-                      ],
+                    // KPI alanını breakpoint'e göre grid olarak göster
+                    LayoutBuilder(
+                      builder: (context, cons) {
+                        final spacing = Responsive.spacingFor(context, xsVal: 8, smVal: 12, mdVal: 16, lgVal: 20, xlVal: 24);
+                        final delegate = Responsive.gridFor(
+                          context,
+                          columns: {
+                            Breakpoint.xs: 1,
+                            Breakpoint.sm: 2,
+                            Breakpoint.md: 2,
+                            Breakpoint.lg: 4,
+                            Breakpoint.xl: 4,
+                          },
+                          childAspectRatio: 2.6, // KPI kartlarının yatay oranı
+                          mainSpacing: spacing,
+                          crossSpacing: spacing,
+                        );
+                        return GridView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: delegate,
+                          children: [
+                            _KpiCard(
+                              icon: Icons.trending_up,
+                              iconColor: Colors.green,
+                              value: _kpiConversion,
+                              label: AppLocalizations.of(context)!.conversionRate,
+                            ),
+                            _KpiCard(
+                              icon: Icons.schedule,
+                              iconColor: Colors.blue,
+                              value: _kpiAvgDays,
+                              label: AppLocalizations.of(context)!.averageProcessingTime,
+                            ),
+                            _KpiCard(
+                              icon: Icons.star,
+                              iconColor: Colors.orange,
+                              value: _kpiSatisfaction,
+                              label: AppLocalizations.of(context)!.customerSatisfaction,
+                            ),
+                            _KpiCard(
+                              icon: Icons.trending_up,
+                              iconColor: Colors.purple,
+                              value: _kpiMonthlyGrowth,
+                              label: AppLocalizations.of(context)!.monthlyGrowth,
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -1124,69 +1145,84 @@ class _AnaSayfaDashboardV2State extends State<AnaSayfaDashboardV2> {
           if (enabled.contains('quickAccess'))
             _DashboardSection(
               title: AppLocalizations.of(context)!.quickAccess,
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.2,
-                children: [
-                  _buildQuickAccessCard(
+              child: LayoutBuilder(
+                builder: (context, cons) {
+                  final spacing = Responsive.spacingFor(context, xsVal: 8, smVal: 12, mdVal: 16, lgVal: 20, xlVal: 24);
+                  final delegate = Responsive.gridFor(
                     context,
-                    AppLocalizations.of(context)!.trash,
-                    Icons.delete_outline,
-                    Colors.red,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CopKutusuEkrani()),
-                    ),
-                  ),
-                  _buildQuickAccessCard(
-                    context,
-                    AppLocalizations.of(context)!.automation,
-                    Icons.settings_outlined,
-                    Colors.purple,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => AutomationManagementScreen()),
-                    ),
-                  ),
-                  _buildQuickAccessCard(
-                    context,
-                    AppLocalizations.of(context)!.taskManagement,
-                    Icons.task_outlined,
-                    Colors.blue,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const TaskManagementScreen()),
-                    ),
-                  ),
-                  _buildQuickAccessCard(
-                    context,
-                    AppLocalizations.of(context)!.advancedReporting,
-                    Icons.assessment_outlined,
-                    Colors.green,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const AdvancedReportingScreenV2()),
-                    ),
-                  ),
-                  _buildQuickAccessCard(
-                    context,
-                    AppLocalizations.of(context)!.messages,
-                    Icons.message_outlined,
-                    Colors.orange,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const MesajlarEkrani()),
-                    ),
-                  ),
-                  _buildQuickAccessCard(
-                    context,
-                    AppLocalizations.of(context)!.globalSearch,
-                    Icons.search,
-                    Colors.teal,
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const GlobalSearchScreen()),
-                    ),
-                  ),
-                ],
+                    columns: {
+                      Breakpoint.xs: 2,
+                      Breakpoint.sm: 3,
+                      Breakpoint.md: 4,
+                      Breakpoint.lg: 6,
+                      Breakpoint.xl: 6,
+                    },
+                    childAspectRatio: 1.2,
+                    mainSpacing: spacing,
+                    crossSpacing: spacing,
+                  );
+                  return GridView(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: delegate,
+                    children: [
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.trash,
+                        Icons.delete_outline,
+                        Colors.red,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const CopKutusuEkrani()),
+                        ),
+                      ),
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.automation,
+                        Icons.settings_outlined,
+                        Colors.purple,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => AutomationManagementScreen()),
+                        ),
+                      ),
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.taskManagement,
+                        Icons.task_outlined,
+                        Colors.blue,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const TaskManagementScreen()),
+                        ),
+                      ),
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.advancedReporting,
+                        Icons.assessment_outlined,
+                        Colors.green,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const AdvancedReportingScreenV2()),
+                        ),
+                      ),
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.messages,
+                        Icons.message_outlined,
+                        Colors.orange,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const MesajlarEkrani()),
+                        ),
+                      ),
+                      _buildQuickAccessCard(
+                        context,
+                        AppLocalizations.of(context)!.globalSearch,
+                        Icons.search,
+                        Colors.teal,
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const GlobalSearchScreen()),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           // Hızlı Erişim sonu

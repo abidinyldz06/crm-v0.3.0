@@ -1,6 +1,38 @@
 
 # Vize Danışmanlık CRM - Değişiklik Günlüğü
 
+## v0.4.0 — 2025-08-05
+
+### 🚀 Öne Çıkanlar
+- Tema standardizasyonu: Material 3 Button (Filled/Elevated/Outlined/Text) temaları hizalandı
+- InputDecorationTheme: label/hint/helper/prefix/suffix/disabled durumlarında renk ve kenarlık tutarlılığı
+- ThemeExtension (AppTokens): spacing/radius/semantik renkler tema üzerinden erişilebilir hale getirildi
+- Logger revizyonu: JSON log formatı (prod), seviye filtresi ve opsiyonel throttle ile gürültü azaltma
+- Global hata yakalama: FlutterError.onError ve runZonedGuarded ile merkezi loglama
+- Loading/Empty/Error bileşenleri: tutarlı mesajlar, CTA/Retry butonları ve maxWidth kısıtı
+- Dashboard V2 responsive: KPI ve Hızlı Erişim alanları için breakpoint bazlı GridView + spacing
+- Login: giriş butonu FilledButton.icon olarak modernize edildi
+
+### 🔧 Teknik Detaylar
+- theme_v2.dart: AppTokens ThemeExtension eklendi; lerpDouble importu (dart:ui) düzeltildi; Material 3 bileşen temaları iyileştirildi
+- services/error_handler_service.dart: AppLogger ve runZonedGuarded importları eklendi; installGlobalHandlers() ile global yakalama
+- widgets/loading_states.dart: centeredLoading/errorState/emptyState düzenlendi (ikon, başlık, spacing, CTA)
+- screens/dashboard_v2.dart: Responsive.gridFor ve spacingFor ile KPI ve quick access grid refaktörü
+- utils/logger.dart: JSON/pretty çıkış, min seviye filtresi ve throttle desteği
+
+### 📘 Geçiş Rehberi
+- Token kullanımı:
+  final tokens = Theme.of(context).extension<AppTokens>()!;
+  SizedBox(height: tokens.spaceMd), BorderRadius.circular(tokens.radiusSm)
+- Log kullanımı:
+  AppLogger.info("İşlem başarılı", extra: {"id": id});
+  AppLogger.debug("Yoğun log", throttleKey: "auth_fetch", throttle: Duration(milliseconds: 500));
+- Global hata yakalama:
+  ErrorHandlerService.installGlobalHandlers(); // main() başlangıcında
+
+---
+# Vize Danışmanlık CRM - Değişiklik Günlüğü
+
 ## [v0.2.5] - 2025-01-27
 
 ## v0.3.0 — 2025-08-04

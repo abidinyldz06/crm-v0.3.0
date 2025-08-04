@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Vize Danışmanlık CRM',
             debugShowCheckedModeBanner: false,
+            // Tema standardizasyonu: theme_v2 varsayılan
             theme: AppThemeV2.lightTheme,
             darkTheme: AppThemeV2.darkTheme,
             themeMode: themeService.themeMode,

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utils/logger.dart';
 
 enum ErrorType {
   network,
@@ -31,6 +33,40 @@ class ErrorHandlerService {
   static final ErrorHandlerService _instance = ErrorHandlerService._internal();
   factory ErrorHandlerService() => _instance;
   ErrorHandlerService._internal();
+
+  /// Flutter ve Dart genel hata yakalayıcılarını kur.
+  /// Bunu main() içinde uygulama başlangıcında çağırın.
+  static void installGlobalHandlers() {
+    // Flutter framework hataları
+    FlutterError.onError = (FlutterErrorDetails details) {
+      // Konsola JSON log
+      AppLogger.error(
+        'FlutterError',
+        tag: 'FlutterError',
+        extra: {
+          'exception': details.exceptionAsString(),
+          'stack': details.stack?.toString(),
+          'library': details.library,
+          'context': details.context?.toDescription(),
+          'information': details.informationCollector?.call().map((e) => e.toDescription()).toList(),
+        },
+      );
+      // Varsayılan davranış (debug’da kırmızı ekran vs.)
+      FlutterError.presentError(details);
+    };
+
+    // Dart zoned errors
+    runZonedGuarded(() {}, (error, stack) {
+      AppLogger.error(
+        'ZonedError',
+        tag: 'ZonedError',
+        extra: {
+          'error': error.toString(),
+          'stack': stack.toString(),
+        },
+      );
+    });
+  }
 
   // Firebase hatalarını çevir
   AppError handleFirebaseError(dynamic error) {
@@ -115,9 +151,20 @@ class ErrorHandlerService {
     );
   }
 
-  // Kullanıcıya hata göster
-  void showError(BuildContext context, dynamic error) {
+  // Kullanıcıya hata göster + logla
+  void showError(BuildContext context, dynamic error, {String tag = 'UI'}) {
     final appError = handleError(error);
+
+    // JSON log
+    AppLogger.error(
+      appError.message,
+      tag: tag,
+      extra: {
+        'type': appError.type.name,
+        if (appError.code != null) 'code': appError.code,
+        if (appError.details != null) 'details': appError.details,
+      },
+    );
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

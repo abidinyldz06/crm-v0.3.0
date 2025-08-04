@@ -1,6 +1,122 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' show lerpDouble;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:crm/services/theme_service.dart';
+
+/// Theme extension ile merkezi tasarım token’ları
+@immutable
+class AppTokens extends ThemeExtension<AppTokens> {
+  final double radiusSm;
+  final double radiusMd;
+  final double radiusLg;
+
+  final double spaceXs;
+  final double spaceSm;
+  final double spaceMd;
+  final double spaceLg;
+  final double spaceXl;
+
+  // Semantik renkler
+  final Color info;
+  final Color success;
+  final Color warning;
+  final Color danger;
+
+  const AppTokens({
+    required this.radiusSm,
+    required this.radiusMd,
+    required this.radiusLg,
+    required this.spaceXs,
+    required this.spaceSm,
+    required this.spaceMd,
+    required this.spaceLg,
+    required this.spaceXl,
+    required this.info,
+    required this.success,
+    required this.warning,
+    required this.danger,
+  });
+
+  static const AppTokens light = AppTokens(
+    radiusSm: 8,
+    radiusMd: 12,
+    radiusLg: 16,
+    spaceXs: 4,
+    spaceSm: 8,
+    spaceMd: 12,
+    spaceLg: 16,
+    spaceXl: 24,
+    info: Colors.blue,
+    success: Colors.green,
+    warning: Colors.orange,
+    danger: Colors.red,
+  );
+
+  static AppTokens dark = AppTokens(
+    radiusSm: 8,
+    radiusMd: 12,
+    radiusLg: 16,
+    spaceXs: 4,
+    spaceSm: 8,
+    spaceMd: 12,
+    spaceLg: 16,
+    spaceXl: 24,
+    info: Colors.blue[400]!,
+    success: Colors.green[400]!,
+    warning: Colors.orange[400]!,
+    danger: Colors.red[400]!,
+  );
+
+  @override
+  AppTokens copyWith({
+    double? radiusSm,
+    double? radiusMd,
+    double? radiusLg,
+    double? spaceXs,
+    double? spaceSm,
+    double? spaceMd,
+    double? spaceLg,
+    double? spaceXl,
+    Color? info,
+    Color? success,
+    Color? warning,
+    Color? danger,
+  }) {
+    return AppTokens(
+      radiusSm: radiusSm ?? this.radiusSm,
+      radiusMd: radiusMd ?? this.radiusMd,
+      radiusLg: radiusLg ?? this.radiusLg,
+      spaceXs: spaceXs ?? this.spaceXs,
+      spaceSm: spaceSm ?? this.spaceSm,
+      spaceMd: spaceMd ?? this.spaceMd,
+      spaceLg: spaceLg ?? this.spaceLg,
+      spaceXl: spaceXl ?? this.spaceXl,
+      info: info ?? this.info,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      danger: danger ?? this.danger,
+    );
+  }
+
+  @override
+  AppTokens lerp(ThemeExtension<AppTokens>? other, double t) {
+    if (other is! AppTokens) return this;
+    return AppTokens(
+      radiusSm: lerpDouble(radiusSm, other.radiusSm, t)!,
+      radiusMd: lerpDouble(radiusMd, other.radiusMd, t)!,
+      radiusLg: lerpDouble(radiusLg, other.radiusLg, t)!,
+      spaceXs: lerpDouble(spaceXs, other.spaceXs, t)!,
+      spaceSm: lerpDouble(spaceSm, other.spaceSm, t)!,
+      spaceMd: lerpDouble(spaceMd, other.spaceMd, t)!,
+      spaceLg: lerpDouble(spaceLg, other.spaceLg, t)!,
+      spaceXl: lerpDouble(spaceXl, other.spaceXl, t)!,
+      info: Color.lerp(info, other.info, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      danger: Color.lerp(danger, other.danger, t)!,
+    );
+  }
+}
 
 class AppThemeV2 {
   // Design tokens
@@ -28,6 +144,9 @@ class AppThemeV2 {
     textTheme: GoogleFonts.interTextTheme().apply(
       fontFamilyFallback: ['Arial', 'sans-serif'],
     ),
+    extensions: const <ThemeExtension<dynamic>>[
+      AppTokens.light,
+    ],
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -47,11 +166,31 @@ class AppThemeV2 {
         borderRadius: BorderRadius.circular(radiusSm),
         borderSide: const BorderSide(color: Color(0xFFEF4444)),
       ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radiusSm),
+        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
       filled: true,
       fillColor: const Color(0xFFF8FAFC),
+      // Ek durum renkleri
+      labelStyle: const TextStyle(color: Color(0xFF64748B)),
+      hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+      helperStyle: const TextStyle(color: Color(0xFF94A3B8)),
+      errorStyle: const TextStyle(color: Color(0xFFEF4444)),
+      prefixIconColor: const Color(0xFF94A3B8),
+      suffixIconColor: const Color(0xFF94A3B8),
     ),
+    // Küçük adım 1: Material 3 düğme ailelerini standardize et
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusSm),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusSm),
         ),
@@ -117,6 +256,9 @@ class AppThemeV2 {
     textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).apply(
       fontFamilyFallback: ['Arial', 'sans-serif'],
     ),
+    extensions: <ThemeExtension<dynamic>>[
+      AppTokens.dark,
+    ],
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -136,9 +278,21 @@ class AppThemeV2 {
         borderRadius: BorderRadius.circular(radiusSm),
         borderSide: const BorderSide(color: Color(0xFFF87171)),
       ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radiusSm),
+        borderSide: BorderSide(color: Color(0xFF374151)),
+      ),
       filled: true,
       fillColor: Colors.grey[850],
+      // Ek durum renkleri
+      labelStyle: TextStyle(color: Colors.grey[400]),
+      hintStyle: TextStyle(color: Colors.grey[500]),
+      helperStyle: TextStyle(color: Colors.grey[500]),
+      errorStyle: const TextStyle(color: Color(0xFFF87171)),
+      prefixIconColor: Colors.grey[500],
+      suffixIconColor: Colors.grey[500],
     ),
+    // Küçük adım 1: Material 3 düğme ailelerini standardize et (dark)
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
@@ -147,6 +301,14 @@ class AppThemeV2 {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusSm),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(

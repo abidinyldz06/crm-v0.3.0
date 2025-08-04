@@ -95,13 +95,18 @@ class LoadingStates {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
+          const SizedBox(
+            width: 36,
+            height: 36,
+            child: CircularProgressIndicator(strokeWidth: 3),
+          ),
           if (showMessage) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               message,
+              textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
@@ -151,32 +156,38 @@ class LoadingStates {
     IconData icon = Icons.error_outline,
   }) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 56,
+              color: Colors.redAccent.shade200,
             ),
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Tekrar Dene'),
+            const SizedBox(height: 12),
+            Text(
+              'Bir Hata Oluştu',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Tekrar Dene'),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -189,31 +200,37 @@ class LoadingStates {
     String? actionText,
   }) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: Colors.grey,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 56,
+              color: Colors.blueGrey.shade300,
             ),
-          ),
-          if (onAction != null && actionText != null) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onAction,
-              child: Text(actionText),
+            const SizedBox(height: 12),
+            Text(
+              'Kayıt Bulunamadı',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            if (onAction != null && actionText != null) ...[
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: onAction,
+                child: Text(actionText),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

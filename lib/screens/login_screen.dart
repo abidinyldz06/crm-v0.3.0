@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 8),
                             SizedBox(
                               height: 48,
-                              child: ElevatedButton.icon(
+                              child: FilledButton.icon(
                                 icon: loading
                                     ? const SizedBox(
                                         width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
